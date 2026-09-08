@@ -33,6 +33,10 @@ export function usePageMeta(title: string, description: string, path: string) {
     setMeta('property', 'og:title', title);
     setMeta('property', 'og:description', description);
     setMeta('property', 'og:url', url);
+    setMeta('property', 'og:image', `${window.location.origin}/og-image.png`);
+    setMeta('property', 'og:image:width', '1200');
+    setMeta('property', 'og:image:height', '630');
+    setMeta('name', 'twitter:card', 'summary_large_image');
     setCanonical(url);
   }, [title, description, path]);
 }

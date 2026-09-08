@@ -18,7 +18,7 @@ export function CategoryPage() {
   if (!category) return <Navigate to="/tools" replace />;
 
   return (
-    <div className="container-page py-10">
+    <div className="container-page animate-fade-in py-10">
       <nav aria-label="Breadcrumb" className="text-xs text-zinc-500 dark:text-zinc-400">
         <ol className="flex items-center gap-1.5">
           <li>

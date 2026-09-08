@@ -41,7 +41,7 @@ export function AllToolsPage() {
   }, [q, cat]);
 
   return (
-    <div className="container-page py-10">
+    <div className="container-page animate-fade-in py-10">
       <h1 className="text-3xl font-bold tracking-tight">All tools</h1>
       <p className="mt-2 text-sm text-zinc-500 dark:text-zinc-400">
         {TOOLS.length} free tools. Search by task or filter by category.

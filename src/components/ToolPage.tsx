@@ -28,7 +28,7 @@ export function ToolPage({ tool, children }: { tool: Tool; children: ReactNode }
   }, [tool.slug]);
 
   return (
-    <div className="container-page py-8 sm:py-12">
+    <div className="container-page animate-fade-in py-8 sm:py-12">
       <nav aria-label="Breadcrumb" className="text-xs text-zinc-500 dark:text-zinc-400">
         <ol className="flex flex-wrap items-center gap-1.5">
           <li>

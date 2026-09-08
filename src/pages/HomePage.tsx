@@ -13,10 +13,10 @@ export function HomePage() {
     'Free, fast, private tools that work instantly in your browser. Compress images, merge PDFs, format JSON, calculate percentages, generate QR codes, invoices and more — no sign-up required.',
     '/',
   );
-  const featured = featuredTools();
+  const featured = featuredTools().slice(0, 6); // 3×2 grid — no orphans
 
   return (
-    <div>
+    <div className="animate-fade-in">
       {/* Hero */}
       <section className="relative overflow-hidden">
         <div
@@ -53,6 +53,22 @@ export function HomePage() {
               ))}
             </div>
           </div>
+
+          {/* Stats strip */}
+          <dl className="mt-10 flex flex-wrap items-center justify-center gap-x-10 gap-y-4">
+            {[
+              { value: `${TOOLS.length}`, label: 'tools, one search' },
+              { value: `${CATEGORIES.length}`, label: 'categories' },
+              { value: '0', label: 'servers touched' },
+              { value: '100%', label: 'free, no account' },
+            ].map((s) => (
+              <div key={s.label} className="text-center">
+                <dt className="sr-only">{s.label}</dt>
+                <dd className="text-2xl font-extrabold tracking-tight text-zinc-900 tabular-nums dark:text-zinc-50">{s.value}</dd>
+                <dd className="mt-0.5 text-xs font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400">{s.label}</dd>
+              </div>
+            ))}
+          </dl>
 
           {/* Popular tools */}
           <div className="mt-12 grid w-full gap-4 sm:grid-cols-2 lg:grid-cols-3">
