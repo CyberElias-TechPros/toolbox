@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>ToolBox — Everyday Tools, All in One Place</title>
+    <meta
+      name="description"
+      content="Free, fast, private tools that work instantly in your browser. Compress images, merge PDFs, format JSON, calculate percentages, generate QR codes, invoices and more — no sign-up required."
+    />
+    <meta name="theme-color" content="#4f46e5" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="ToolBox" />
+    <meta property="og:title" content="ToolBox — Everyday Tools, All in One Place" />
+    <meta
+      property="og:description"
+      content="Convert, compress, calculate, generate, format and create — quickly and privately from your browser."
+    />
+    <meta name="twitter:card" content="summary" />
+    <script>
+      // Apply saved (or system) theme before first paint to avoid a flash.
+      (function () {
+        try {
+          var stored = localStorage.getItem('toolbox-theme');
+          var dark = stored
+            ? stored === 'dark'
+            : window.matchMedia('(prefers-color-scheme: dark)').matches;
+          if (dark) document.documentElement.classList.add('dark');
+        } catch (e) {}
+      })();
+    </script>
+  </head>
+  <body class="bg-zinc-50 text-zinc-900 antialiased dark:bg-zinc-950 dark:text-zinc-100">
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
