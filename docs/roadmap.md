@@ -23,34 +23,34 @@
 - **Business**: Invoice Generator, Receipt Generator
 - **Utility**: Password Generator
 
-## Phase 3 — Expand to 40–60 tools (in progress: 18 shipped in v0.2)
+## Phase 3 — Expand to 40–60 tools (✅ COMPLETE — 74 tools shipped, target exceeded)
 
-✅ Shipped in v0.2 (total 47 tools):
+v0.2 (18 tools): Hash Generator, Regex Tester, Query String Parser, JSON ↔ CSV, PDF Page
+Deleter, PDF Rotator, Image Metadata Cleaner, Image → Base64, Base64 → Image, Social Text
+Formatter, Hashtag Generator, Quotation Generator, Number to Words, Stopwatch, Countdown
+Timer, Random Number Generator, Contrast Checker.
 
-- Developer: Hash Generator, Regex Tester, Query String Parser, JSON → CSV, CSV → JSON
-- PDF: Page Deleter, Rotator
-- Image: Metadata Cleaner, Image → Base64, Base64 → Image
-- Marketing: Social Media Text Formatter, Hashtag Generator
-- Business: Quotation Generator
-- Utility: Number to Words, Stopwatch, Countdown Timer, Random Number Generator,
-  Contrast Checker
+v0.3 (27 tools): Line Sorter, Text to List, HTML → Text, Text → HTML, Markdown Formatter,
+Character Counter, JSON → TypeScript, Cron Helper, HTTP Status Reference, MIME Lookup,
+User-Agent Parser, Color Picker, Favicon Generator, Image Blur, Passport/ID Photo, PDF Page
+Organizer, PDF → Image, OG Image Generator, YouTube Thumbnail Maker, Social Image Resizer,
+robots.txt Generator, Sitemap Generator, Purchase Order, Delivery Note, Certificate
+Generator, World Clock, Time Zone Converter.
 
-Remaining (in rough priority order):
+Deliberately not built (with reasons):
 
-- Image: Metadata Cleaner, Image to Base64 / Base64 to Image, Color Picker, Favicon Generator,
-  Passport/ID Photo sheet, Blur
-- PDF: Page Organizer (drag-reorder), Rotator, Page Deleter, PDF → Image, Metadata cleaner,
-  Document Scanner (image → PDF enhancement)
-- Text: Sort Lines, Text-to-List, HTML → Text / Text → HTML, Markdown Formatter, Character Counter
-- Developer: JSON → CSV / CSV → JSON, JSON → TypeScript, Hash (SHA-256 via SubtleCrypto),
-  Regex Tester, Query String Parser, Cron Helper, HTTP Status Reference, MIME Lookup,
-  User-Agent Parser
-- Converters: Length/Weight/Area/Volume, Data size long-tail SEO pages
-- Marketing: Social Media Text Formatter, Hashtag Generator, Open Graph Image Generator,
-  YouTube Thumbnail Maker, Social Image Resizer, Robots.txt Generator, Sitemap Generator
-- Business: Quotation, Purchase Order, Delivery Note, Certificate Generator
-- Utility: Random Number/Name Generators, Stopwatch, Timer, Number to Words, World Clock,
-  Time Zone Converter, Contrast Checker
+- **Document Scanner (image → PDF enhancement)** — corner-detection/auto-enhancement is a
+  heavy CV feature; a thin wrapper around CSS filters would be fake. Revisit if real demand.
+- **Data-size long-tail SEO pages** — excluded by design: every indexed page must provide
+  genuine value; hundreds of thin “X bytes = Y KB” pages would be mass thin SEO.
+- **PDF Page Organizer drag-reorder** — arrow-button reorder ships (works on touch);
+  drag-and-drop is a UX refinement, not a missing capability.
+
+Still open (small):
+
+- PDF metadata cleaner (strip title/producer etc. from PDFs)
+- Area + Volume categories in the Unit Converter
+- Random name/word picker (pick N from a pasted list — complements Random Number Generator)
 
 Each tool is one registry entry + one component (see README “Adding a tool”).
 

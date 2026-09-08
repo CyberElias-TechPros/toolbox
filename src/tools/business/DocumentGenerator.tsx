@@ -4,7 +4,7 @@ import { Field, Input, Textarea } from '../../components/ui/fields';
 import { downloadText, uid } from '../../lib/utils';
 import { track } from '../../lib/track';
 
-type Kind = 'invoice' | 'receipt' | 'quote';
+type Kind = 'invoice' | 'receipt' | 'quote' | 'po' | 'delivery';
 type Currency = 'NGN' | 'USD' | 'EUR' | 'GBP';
 const CURRENCY_SYMBOL: Record<Currency, string> = { NGN: '₦', USD: '$', EUR: '€', GBP: '£' };
 
@@ -55,7 +55,8 @@ export function DocumentTool({ kind }: { kind: Kind }) {
     bizContact: 'hello@mybusiness.com · +234 800 000 0000',
     custName: 'Customer Name',
     custAddress: '',
-    number: kind === 'invoice' ? 'INV-001' : kind === 'quote' ? 'QTN-001' : 'RCP-001',
+    number:
+      kind === 'invoice' ? 'INV-001' : kind === 'quote' ? 'QTN-001' : kind === 'po' ? 'PO-001' : kind === 'delivery' ? 'DN-001' : 'RCP-001',
     date: today(),
     due: plusDays(14),
     currency: 'NGN',
@@ -67,7 +68,11 @@ export function DocumentTool({ kind }: { kind: Kind }) {
         ? 'Payment due within 14 days. Thank you for your business!'
         : kind === 'quote'
           ? 'This quotation is valid for 14 days. Thank you for your consideration!'
-          : 'Payment received. Thank you!',
+          : kind === 'po'
+            ? 'Please confirm this order. Goods will be dispatched after confirmation.'
+            : kind === 'delivery'
+              ? 'Please inspect the items and sign below upon receipt.'
+              : 'Payment received. Thank you!',
   }));
 
   const set = <K extends keyof DocState>(k: K, v: DocState[K]) => setS((prev) => ({ ...prev, [k]: v }));
@@ -87,11 +92,21 @@ export function DocumentTool({ kind }: { kind: Kind }) {
     return { subtotal, discount, tax, total };
   }, [s.items, s.discountPct, s.taxPct]);
 
-  const docTitle = kind === 'invoice' ? 'INVOICE' : kind === 'quote' ? 'QUOTATION' : 'RECEIPT';
-  const dateLabel = kind === 'invoice' ? 'Invoice date' : 'Date';
-  const dueLabel = kind === 'quote' ? 'Valid until' : 'Due';
-  const showDue = kind !== 'receipt';
+  const docTitle =
+    kind === 'invoice'
+      ? 'INVOICE'
+      : kind === 'quote'
+        ? 'QUOTATION'
+        : kind === 'po'
+          ? 'PURCHASE ORDER'
+          : kind === 'delivery'
+            ? 'DELIVERY NOTE'
+            : 'RECEIPT';
+  const dateLabel = kind === 'invoice' ? 'Invoice date' : kind === 'po' ? 'PO date' : 'Date';
+  const dueLabel = kind === 'quote' ? 'Valid until' : kind === 'po' ? 'Delivery by' : 'Due';
+  const showDue = kind !== 'receipt' && kind !== 'delivery';
   const showPaid = kind === 'receipt';
+  const showPrices = kind !== 'delivery';
   const fmtDate = (iso: string) => {
     const d = new Date(`${iso}T12:00:00`);
     return Number.isNaN(d.getTime()) ? iso : d.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
@@ -99,12 +114,19 @@ export function DocumentTool({ kind }: { kind: Kind }) {
 
   const downloadHtml = () => {
     const rows = s.items
-      .filter((it) => it.desc.trim() || parseFloat(it.price))
+      .filter((it) => it.desc.trim() || (showPrices && parseFloat(it.price)))
       .map(
         (it) =>
-          `      <tr><td>${escapeHtml(it.desc || '—')}</td><td class="r">${escapeHtml(it.qty || '1')}</td><td class="r">${money((parseFloat(it.qty) || 0) * (parseFloat(it.price) || 0), s.currency)}</td></tr>`,
+          `      <tr><td>${escapeHtml(it.desc || '—')}</td><td class="r">${escapeHtml(it.qty || '1')}</td>${showPrices ? `<td class="r">${money((parseFloat(it.qty) || 0) * (parseFloat(it.price) || 0), s.currency)}</td>` : ''}</tr>`,
       )
       .join('\n');
+    const signatures =
+      kind === 'delivery'
+        ? `  <div style="display:flex; justify-content:space-between; gap:32px; margin-top:72px;">
+    <div style="width:45%; border-top:1px solid #18181b; padding-top:6px; font-size:12px; color:#71717a;">Dispatched by — name &amp; signature</div>
+    <div style="width:45%; border-top:1px solid #18181b; padding-top:6px; font-size:12px; color:#71717a;">Received by — name &amp; signature</div>
+  </div>`
+        : '';
     const html = `<!doctype html>
 <html lang="en">
 <head>
@@ -140,17 +162,22 @@ export function DocumentTool({ kind }: { kind: Kind }) {
   </div>
   ${showPaid ? '<p class="paid" style="margin-top:16px">✓ PAID</p>' : ''}
   <table>
-    <thead><tr><th>Description</th><th class="r">Qty</th><th class="r">Amount</th></tr></thead>
+    <thead><tr><th>Description</th><th class="r">Qty</th>${showPrices ? '<th class="r">Amount</th>' : ''}</tr></thead>
     <tbody>
 ${rows}
     </tbody>
   </table>
-  <div class="totals">
+  ${
+    showPrices
+      ? `<div class="totals">
     <div><span>Subtotal</span><span>${money(totals.subtotal, s.currency)}</span></div>
     ${totals.discount > 0 ? `<div><span>Discount (${s.discountPct}%)</span><span>−${money(totals.discount, s.currency)}</span></div>` : ''}
     ${totals.tax > 0 ? `<div><span>Tax (${s.taxPct}%)</span><span>${money(totals.tax, s.currency)}</span></div>` : ''}
     <div class="grand"><span>Total</span><span>${money(totals.total, s.currency)}</span></div>
-  </div>
+  </div>`
+      : ''
+  }
+  ${signatures}
   <p class="notes">${escapeHtml(s.notes)}</p>
 </body>
 </html>`;
@@ -200,6 +227,7 @@ ${rows}
                 <Input type="date" value={s.due} onChange={(e) => set('due', e.target.value)} aria-label={dueLabel} />
               </Field>
             ) : null}
+            {showPrices ? (
             <div className="grid grid-cols-3 gap-4">
               <Field label="Currency">
                 <select
@@ -221,6 +249,7 @@ ${rows}
                 <Input type="number" min={0} max={100} step="any" value={s.taxPct} onChange={(e) => set('taxPct', e.target.value)} aria-label="Tax percent" />
               </Field>
             </div>
+            ) : null}
 
             <h2 className="pt-2 text-sm font-semibold">Line items</h2>
             {s.items.map((it) => (
@@ -251,20 +280,22 @@ ${rows}
                   aria-label="Quantity"
                   className="w-16"
                 />
-                <Input
-                  type="number"
-                  min={0}
-                  step="any"
-                  value={it.price}
-                  onChange={(e) =>
-                    set(
-                      'items',
-                      s.items.map((x) => (x.id === it.id ? { ...x, price: e.target.value } : x)),
-                    )
-                  }
-                  aria-label="Unit price"
-                  className="w-24"
-                />
+                {showPrices ? (
+                  <Input
+                    type="number"
+                    min={0}
+                    step="any"
+                    value={it.price}
+                    onChange={(e) =>
+                      set(
+                        'items',
+                        s.items.map((x) => (x.id === it.id ? { ...x, price: e.target.value } : x)),
+                      )
+                    }
+                    aria-label="Unit price"
+                    className="w-24"
+                  />
+                ) : null}
                 <Button
                   variant="ghost"
                   size="sm"
@@ -346,13 +377,13 @@ ${rows}
               <tr className="border-b border-zinc-300 text-left text-[11px] uppercase tracking-wider text-zinc-400">
                 <th className="px-2 py-2">Description</th>
                 <th className="w-16 px-2 py-2 text-right">Qty</th>
-                <th className="w-28 px-2 py-2 text-right">Amount</th>
+                {showPrices ? <th className="w-28 px-2 py-2 text-right">Amount</th> : null}
               </tr>
             </thead>
             <tbody>
               {items.length === 0 ? (
                 <tr>
-                  <td colSpan={3} className="px-2 py-6 text-center text-zinc-400">
+                  <td colSpan={showPrices ? 3 : 2} className="px-2 py-6 text-center text-zinc-400">
                     Add line items to see them here.
                   </td>
                 </tr>
@@ -361,15 +392,18 @@ ${rows}
                   <tr key={it.id} className="border-b border-zinc-100">
                     <td className="px-2 py-2.5">{it.desc || '—'}</td>
                     <td className="px-2 py-2.5 text-right tabular-nums">{it.qty || '1'}</td>
-                    <td className="px-2 py-2.5 text-right tabular-nums">
-                      {money((parseFloat(it.qty) || 0) * (parseFloat(it.price) || 0), s.currency)}
-                    </td>
+                    {showPrices ? (
+                      <td className="px-2 py-2.5 text-right tabular-nums">
+                        {money((parseFloat(it.qty) || 0) * (parseFloat(it.price) || 0), s.currency)}
+                      </td>
+                    ) : null}
                   </tr>
                 ))
               )}
             </tbody>
           </table>
 
+          {showPrices ? (
           <div className="ml-auto mt-4 w-full max-w-[16rem] text-sm">
             <div className="flex justify-between py-1">
               <span className="text-zinc-500">Subtotal</span>
@@ -393,6 +427,14 @@ ${rows}
             </div>
             <p className="mt-2 text-right text-xs text-zinc-400">{CURRENCY_SYMBOL[s.currency]} {s.currency}</p>
           </div>
+          ) : null}
+
+          {kind === 'delivery' ? (
+            <div className="mt-16 flex justify-between gap-8">
+              <div className="w-1/2 border-t border-zinc-900 pt-1.5 text-xs text-zinc-500">Dispatched by — name &amp; signature</div>
+              <div className="w-1/2 border-t border-zinc-900 pt-1.5 text-xs text-zinc-500">Received by — name &amp; signature</div>
+            </div>
+          ) : null}
 
           {s.notes ? <p className="mt-8 whitespace-pre-line text-xs leading-relaxed text-zinc-500">{s.notes}</p> : null}
         </div>
@@ -411,6 +453,14 @@ export function ReceiptDoc() {
 
 export function QuoteDoc() {
   return <DocumentTool kind="quote" />;
+}
+
+export function PurchaseOrderDoc() {
+  return <DocumentTool kind="po" />;
+}
+
+export function DeliveryNoteDoc() {
+  return <DocumentTool kind="delivery" />;
 }
 
 function escapeHtml(s: string): string {

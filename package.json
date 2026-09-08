@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.1.0",
   "type": "module",
-  "description": "ToolBox \u2014 everyday tools, all in one place. Fast, free, private browser tools.",
+  "description": "ToolBox — everyday tools, all in one place. Fast, free, private browser tools.",
   "scripts": {
     "dev": "vite",
     "build": "tsx scripts/generate-sitemap.ts && tsc --noEmit && vite build",
@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "pdf-lib": "^1.17.1",
+    "pdfjs-dist": "^6.3.289",
     "qrcode": "^1.5.4",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",

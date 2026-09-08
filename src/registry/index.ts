@@ -1663,6 +1663,867 @@ export const TOOLS: Tool[] = [
     related: ['color-converter', 'qr-generator', 'meta-tag-generator'],
     component: lazy(() => import('../tools/utility/ContrastChecker')),
   },
+
+  /* --------------------- Phase 3 — Text tools ------------------------ */
+  {
+    slug: 'sort-lines',
+    name: 'Line Sorter',
+    category: 'text',
+    tagline: 'Sort lines alphabetically, numerically or by size — dedupe included.',
+    description:
+      'Paste a list and sort it ascending or descending. Choose text or numeric order, keep or remove duplicates, and control case sensitivity. Works on any list — names, numbers, log lines, CSV rows.',
+    icon: '↕️',
+    clientOnly: true,
+    tags: ['sort lines', 'sort list', 'sort alphabetically', 'sort numbers', 'remove duplicates', 'dedupe', 'order list'],
+    aliases: ['sort lines', 'sort my list', 'alphabetize lines', 'remove duplicate lines', 'sort a list of numbers'],
+    steps: ['Paste your lines (one per line).', 'Pick order, case and numeric options.', 'Copy or download the sorted list.'],
+    features: [
+      'Ascending or descending',
+      'Numeric-aware sorting (2 < 10)',
+      'Optional de-duplication',
+      'Case-sensitive or case-insensitive',
+      'Copy or download the result',
+    ],
+    faq: [
+      {
+        q: 'How does numeric sorting handle mixed content?',
+        a: 'Lines that start with a number are ordered by value; everything else falls back to text order. Numbers always come before words when sorting ascending.',
+      },
+      {
+        q: 'Does it trim whitespace?',
+        a: 'No — lines are sorted exactly as written, so leading spaces affect text order. Use the Text Cleaner first if you need trimming.',
+      },
+    ],
+    related: ['text-to-list', 'text-cleaner', 'character-counter'],
+    component: lazy(() => import('../tools/text/SortLines')),
+  },
+  {
+    slug: 'text-to-list',
+    name: 'Text to List',
+    category: 'text',
+    tagline: 'Turn comma-separated text into a clean bulleted or numbered list.',
+    description:
+      'Convert a run of text into a tidy list: split by commas, semicolons or new lines, then format with bullets, dashes or numbers. Great for turning notes into presentation-ready lists.',
+    icon: '📋',
+    clientOnly: true,
+    tags: ['text to list', 'make a list', 'bulleted list', 'numbered list', 'comma to list', 'format list', 'split into items'],
+    aliases: ['text to list', 'make bullet points from text', 'convert commas to list', 'numbered list from text'],
+    steps: ['Paste your text.', 'Choose the separator and list style.', 'Copy the finished list.'],
+    features: [
+      'Split by commas, semicolons or new lines',
+      'Bulleted, dashed or numbered output',
+      'Strips existing bullet markers',
+      'Instant result as you type',
+    ],
+    faq: [
+      {
+        q: 'My items already have bullets — will I get double bullets?',
+        a: 'No. Existing markers (•, -, *, +) at the start of a line are stripped before the new style is applied.',
+      },
+      {
+        q: 'The separator appears inside my items — what happens?',
+        a: 'Everything between separators becomes its own item, even if that splits a phrase. For lists like that, put one item per line and choose “new lines”.',
+      },
+    ],
+    related: ['sort-lines', 'text-cleaner', 'lorem-ipsum'],
+    component: lazy(() => import('../tools/text/TextToList')),
+  },
+  {
+    slug: 'html-to-text',
+    name: 'HTML to Text Converter',
+    category: 'text',
+    tagline: 'Strip HTML tags and keep readable plain text.',
+    description:
+      'Paste any HTML and get clean plain text: tags are removed, scripts and styles disappear, and block elements become line breaks. Perfect for cleaning up scraped content or email bodies.',
+    icon: '📄',
+    clientOnly: true,
+    tags: ['html to text', 'strip html', 'remove html tags', 'clean html', 'html to plain text', 'email to text'],
+    aliases: ['html to text', 'remove html tags', 'strip tags from html', 'convert html to plain text'],
+    steps: ['Paste the HTML.', 'Read or copy the plain text.', 'Download as .txt if needed.'],
+    features: [
+      'Removes scripts, styles and hidden elements',
+      'Block elements become line breaks',
+      'Collapses excess blank lines',
+      'Runs locally — your content is never uploaded',
+    ],
+    faq: [
+      {
+        q: 'Are links converted to URLs?',
+        a: 'The link text is kept (that’s what readers see); the href is not appended. Keep it simple and readable.',
+      },
+      {
+        q: 'Will tables survive the conversion?',
+        a: 'Cell contents are kept, with cells separated by line breaks. Column alignment is lost — plain text has no layout.',
+      },
+    ],
+    related: ['text-to-html', 'text-cleaner', 'markdown-formatter'],
+    component: lazy(
+      () => import('../tools/text/HtmlText').then((m) => ({ default: () => createElement(m.default, { direction: 'html2text' }) })),
+    ),
+  },
+  {
+    slug: 'text-to-html',
+    name: 'Text to HTML Converter',
+    category: 'text',
+    tagline: 'Turn plain text into safe, minimal HTML.',
+    description:
+      'Convert plain text to clean HTML: blank lines become paragraphs, single line breaks become <br/> tags, and every character is escaped so pasting your text can never inject markup or scripts.',
+    icon: '🏷️',
+    clientOnly: true,
+    tags: ['text to html', 'plain text to html', 'escape html', 'make html paragraphs', 'txt to html', 'html safe'],
+    aliases: ['text to html', 'convert text to html', 'escape html entities', 'make paragraphs from text'],
+    steps: ['Paste your plain text.', 'Choose how blank lines should map.', 'Copy the HTML.'],
+    features: [
+      'Blank lines become <p> paragraphs',
+      'Line breaks become <br/>',
+      'Full HTML escaping (no injected markup)',
+      'Minimal, portable output',
+    ],
+    faq: [
+      {
+        q: 'Why does my output contain &amp; instead of &?',
+        a: 'That’s HTML escaping doing its job: the raw HTML displays as the literal character when rendered. Browsers handle it automatically.',
+      },
+      {
+        q: 'Can I keep my existing formatting?',
+        a: 'This tool treats input as plain text on purpose. If you already have HTML, use the HTML to Text tool to clean it, or paste as-is.',
+      },
+    ],
+    related: ['html-to-text', 'markdown-formatter', 'text-cleaner'],
+    component: lazy(
+      () => import('../tools/text/HtmlText').then((m) => ({ default: () => createElement(m.default, { direction: 'text2html' }) })),
+    ),
+  },
+  {
+    slug: 'markdown-formatter',
+    name: 'Markdown Formatter',
+    category: 'text',
+    tagline: 'Write Markdown, get styled HTML — live preview included.',
+    description:
+      'A fast, private Markdown editor with a live preview: headings, bold, italic, code, links, lists, blockquotes and horizontal rules. Copy the HTML or download it as a file.',
+    icon: 'Ⓜ️',
+    clientOnly: true,
+    tags: ['markdown', 'markdown to html', 'markdown editor', 'markdown formatter', 'md to html', 'write markdown'],
+    aliases: ['markdown to html', 'markdown editor', 'format markdown', 'convert md to html'],
+    steps: ['Type or paste Markdown.', 'Watch the live preview.', 'Copy the HTML or download it.'],
+    features: [
+      'Live side-by-side preview',
+      'Headings, emphasis, code, links, lists, quotes',
+      'Safe HTML output (input is escaped)',
+      'No account, no upload — 100% in your browser',
+    ],
+    faq: [
+      {
+        q: 'Which Markdown features are supported?',
+        a: 'ATX headings (#), bold (**), italic (*), inline code, fenced code blocks, links, ordered/unordered lists, blockquotes and horizontal rules — the everyday 90%.',
+      },
+      {
+        q: 'Why do my angle brackets appear escaped?',
+        a: 'Raw HTML in Markdown input is escaped for safety, so pasting <script> can never execute. Use the Text to HTML tool if you need literal tags in output.',
+      },
+    ],
+    related: ['html-to-text', 'text-to-html', 'lorem-ipsum'],
+    component: lazy(() => import('../tools/text/MarkdownFormatter')),
+  },
+  {
+    slug: 'character-counter',
+    name: 'Character Counter',
+    category: 'text',
+    tagline: 'Count characters, words, sentences, paragraphs and reading time.',
+    description:
+      'Paste any text and get instant counts: characters with and without spaces, words, sentences, paragraphs, lines and an estimated reading time. Live as you type — for tweets, essays, labels and everything between.',
+    icon: '🔢',
+    clientOnly: true,
+    tags: ['character counter', 'word counter', 'count characters', 'reading time', 'sentence counter', 'text stats', 'count words'],
+    aliases: ['character counter', 'count my words', 'how many characters', 'reading time calculator'],
+    steps: ['Paste or type your text.', 'Read the live counts.'],
+    features: [
+      'Characters (with and without spaces)',
+      'Words, sentences, paragraphs and lines',
+      'Estimated reading time at 200 wpm',
+      'Updates live while you type',
+    ],
+    faq: [
+      {
+        q: 'How is a “sentence” detected?',
+        a: 'Runs of ., ! or ? that end a segment. It’s an estimate — abbreviations like “U.S.” can count as two.',
+      },
+      {
+        q: 'What reading time does it use?',
+        a: '200 words per minute — a common average for adult reading speed. Skimmers read faster; dense technical text slower.',
+      },
+    ],
+    related: ['word-counter', 'text-cleaner', 'sort-lines'],
+    component: lazy(() => import('../tools/text/CharacterCounter')),
+  },
+
+  /* ------------------- Phase 3 — Developer tools --------------------- */
+  {
+    slug: 'json-to-typescript',
+    name: 'JSON to TypeScript',
+    category: 'developer',
+    tagline: 'Infer TypeScript interfaces from any JSON.',
+    description:
+      'Paste a JSON object (or array) and get the matching TypeScript types: interfaces for nested objects, unions for mixed arrays, quoted property names for odd keys. One click to copy.',
+    icon: 'TS',
+    clientOnly: true,
+    tags: ['json to typescript', 'json to ts', 'generate types', 'json schema types', 'infer types', 'typescript interface'],
+    aliases: ['json to typescript', 'generate types from json', 'json to ts interface', 'infer typescript from json'],
+    steps: ['Paste your JSON.', 'Set the root interface name.', 'Copy the TypeScript.'],
+    features: [
+      'Interfaces for nested objects',
+      'Unions for mixed-type arrays',
+      'Non-identifier keys are quoted automatically',
+      'Rename the root type to anything',
+    ],
+    faq: [
+      {
+        q: 'Does it use the JSON Schema spec?',
+        a: 'It infers directly from your example data — no schema needed. For exhaustive contracts, validate your JSON against a schema separately.',
+      },
+      {
+        q: 'What about numbers that look like integers?',
+        a: 'All JSON numbers map to TypeScript number. If you need integer-only types, that’s a stricter check the tool doesn’t assume.',
+      },
+    ],
+    related: ['json-formatter', 'json-to-csv', 'uuid-generator'],
+    component: lazy(() => import('../tools/dev/JsonToTypeScript')),
+  },
+  {
+    slug: 'cron-helper',
+    name: 'Cron Helper',
+    category: 'developer',
+    tagline: 'Decode cron expressions and preview the next 5 runs.',
+    description:
+      'Type or pick a 5-field cron expression and get a plain-English description plus the next five run times in your local time. Built-in presets for the schedules everyone uses.',
+    icon: '⏲️',
+    clientOnly: true,
+    tags: ['cron', 'cron expression', 'cron helper', 'cron schedule', 'next run', 'crontab', 'scheduled jobs'],
+    aliases: ['cron helper', 'what does this cron do', 'cron to human readable', 'when will my cron run'],
+    steps: ['Enter or pick a cron expression.', 'Read the plain-English meaning.', 'Check the next 5 run times.'],
+    features: [
+      'Human-readable descriptions',
+      'Next 5 occurrences in your local time',
+      'Common presets (daily, weekdays, monthly…)',
+      'Clear validation errors for bad expressions',
+    ],
+    faq: [
+      {
+        q: 'Day-of-month and day-of-week — which wins?',
+        a: 'Standard cron rule: if both are restricted (not *), a run happens when either matches. If only one is restricted, that one must match.',
+      },
+      {
+        q: 'Do run times account for my server’s timezone?',
+        a: 'The preview uses your local time. Your actual scheduler (Cloudflare Cron Triggers, GitHub Actions, Vercel Cron) runs in the timezone it’s configured with — usually UTC.',
+      },
+    ],
+    related: ['timestamp-converter', 'world-clock', 'timezone-converter'],
+    component: lazy(() => import('../tools/dev/CronHelper')),
+  },
+  {
+    slug: 'http-status-reference',
+    name: 'HTTP Status Codes',
+    category: 'developer',
+    tagline: 'What every HTTP status code means — searchable, offline.',
+    description:
+      'A fast reference for HTTP status codes: the official name, a plain-English meaning, and a practical hint for each. Search by code, name or keyword — no page reloads, works offline.',
+    icon: '📡',
+    clientOnly: true,
+    tags: ['http status codes', 'status code meaning', '404', '500 error', 'http reference', 'what is 429', 'api codes'],
+    aliases: ['http status codes', 'what does 502 mean', 'status code reference', 'http 429 meaning'],
+    steps: ['Search a code or keyword (e.g. “rate”).', 'Read the meaning and hint.'],
+    features: [
+      'Every code developers actually meet',
+      'Plain-English explanations + hints',
+      'Grouped by class with color coding',
+      'Instant filtering, fully offline',
+    ],
+    faq: [
+      {
+        q: 'Why is 418 here?',
+        a: '“I’m a Teapot” is a real RFC (2324, an April-Fools protocol) and a developer favourite. It’s included because people keep asking.',
+      },
+      {
+        q: 'Should my API return 400 or 422 for validation errors?',
+        a: 'Either is defensible: 400 for malformed requests, 422 when the format is valid but the content is rejected. Be consistent and document it.',
+      },
+    ],
+    related: ['mime-lookup', 'user-agent-parser', 'query-string-parser'],
+    component: lazy(() => import('../tools/dev/HttpStatus')),
+  },
+  {
+    slug: 'mime-lookup',
+    name: 'MIME Type Lookup',
+    category: 'developer',
+    tagline: 'File extension ↔ MIME type, in both directions.',
+    description:
+      'Look up the MIME (content) type for any file extension — or find which extensions map to a type. 40+ common types from image and video to fonts and archives, each copyable in one click.',
+    icon: '📎',
+    clientOnly: true,
+    tags: ['mime type', 'mime lookup', 'content type', 'file extension', 'image/png', 'application/json', 'mimetype'],
+    aliases: ['mime type lookup', 'what is the mime type of pdf', 'content type for webp', 'extension to mime'],
+    steps: ['Type an extension or a type.', 'Copy the result.'],
+    features: [
+      'Search by extension, name or type',
+      '40+ common types covered',
+      'One-click copy for each row',
+      'Instant top match card',
+    ],
+    faq: [
+      {
+        q: 'Which should I use: text/javascript or application/javascript?',
+        a: 'Both are valid; text/javascript is what browsers expect for scripts. For APIs, application/json is the standard.',
+      },
+      {
+        q: 'Why is image/svg+xml “+xml”?',
+        a: 'SVG files are XML documents, so the MIME type declares it. Same idea as application/ld+json.',
+      },
+    ],
+    related: ['http-status-reference', 'user-agent-parser', 'base64'],
+    component: lazy(() => import('../tools/dev/MimeLookup')),
+  },
+  {
+    slug: 'user-agent-parser',
+    name: 'User Agent Parser',
+    category: 'developer',
+    tagline: 'Turn a User-Agent string into browser, OS and device.',
+    description:
+      'Paste a User-Agent string from your logs and get the browser, version, operating system and device type — parsed locally with clear sample strings to test against.',
+    icon: '🔎',
+    clientOnly: true,
+    tags: ['user agent', 'ua parser', 'parse user agent', 'browser detect', 'os detect', 'device detect', 'logs'],
+    aliases: ['user agent parser', 'parse this user agent', 'what browser is this ua', 'ua to browser os device'],
+    steps: ['Paste the User-Agent string (or tap a sample).', 'Read browser, OS and device.'],
+    features: [
+      'Browser + version detection',
+      'Operating system and version',
+      'Desktop / phone / tablet classification',
+      'Sample strings for testing',
+    ],
+    faq: [
+      {
+        q: 'How accurate is this?',
+        a: 'User-Agent strings are self-reported and often spoofed — treat results as best-effort, which is true of every UA parser. For analytics, combine with heuristics.',
+      },
+      {
+        q: 'Does it work for bots?',
+        a: 'Known browser/OS fingerprints are parsed; unknown agents (most bots) show as “Unknown” with their raw length.',
+      },
+    ],
+    related: ['mime-lookup', 'http-status-reference', 'query-string-parser'],
+    component: lazy(() => import('../tools/dev/UserAgentParser')),
+  },
+
+  /* --------------------- Phase 3 — Image tools ----------------------- */
+  {
+    slug: 'color-picker',
+    name: 'Color Picker',
+    category: 'image',
+    tagline: 'Pick a color, get HEX/RGB/HSL/CMYK plus tints and shades.',
+    description:
+      'A designer’s color workbench: pick any color and instantly read it in HEX, RGB, HSL and CMYK, see five tints and five shades for building a palette, and get a black/white text recommendation for contrast.',
+    icon: '🎨',
+    clientOnly: true,
+    tags: ['color picker', 'hex color', 'rgb to hsl', 'cmyk', 'color palette', 'tints and shades', 'color tools'],
+    aliases: ['color picker', 'convert hex to rgb', 'color palette generator', 'what hex is this color'],
+    steps: ['Pick a color (or type its hex).', 'Copy HEX/RGB/HSL/CMYK.', 'Click tints/shades to copy them.'],
+    features: [
+      'HEX, RGB, HSL and CMYK formats',
+      '5 tints + 5 shades palette',
+      'Best text color suggestion (black/white)',
+      'Click-to-copy swatches',
+    ],
+    faq: [
+      {
+        q: 'Why does CMYK not match my print shop’s values?',
+        a: 'CMYK is profile-dependent (the same color prints differently on different paper/press). Use this for design work; final print values come from your prepress profile.',
+      },
+      {
+        q: 'What’s the text suggestion used for?',
+        a: 'It picks whichever of black or white gives the higher WCAG contrast ratio on your color — handy before you fine-tune with the Contrast Checker.',
+      },
+    ],
+    related: ['color-converter', 'contrast-checker', 'favicon-generator'],
+    component: lazy(() => import('../tools/image/ColorPicker')),
+  },
+  {
+    slug: 'favicon-generator',
+    name: 'Favicon Generator',
+    category: 'image',
+    tagline: 'Letter or emoji favicons in every size browsers need.',
+    description:
+      'Create a clean letter or emoji favicon: choose colors and corner radius, then generate PNGs at 16, 32, 48, 180 and 512 pixels plus the exact <link> tags to paste into your site.',
+    icon: '🔖',
+    clientOnly: true,
+    tags: ['favicon', 'favicon generator', 'site icon', 'apple touch icon', 'tab icon', 'branding', 'website icon'],
+    aliases: ['favicon generator', 'make a favicon', 'website icon maker', 'apple touch icon'],
+    steps: ['Choose your letter or emoji, colors and radius.', 'Generate sizes.', 'Download all + copy the <link> tags.'],
+    features: [
+      '16 / 32 / 48 / 180 / 512 px PNGs',
+      'Letter or emoji glyph',
+      'Adjustable corner radius',
+      'Ready-to-paste <link> tags',
+    ],
+    faq: [
+      {
+        q: 'Which sizes do I actually need?',
+        a: '16/32/48 for browser tabs, 180 for Apple touch icons, 512 for high-DPI and PWA icons. Downloading all five covers everything.',
+      },
+      {
+        q: 'Can I use a real logo instead of a letter?',
+        a: 'For a full logo, use the Image Compressor/Resizer to make a 512×512 PNG, then create 16/32/48 copies. This tool is tuned for fast letter/emoji marks.',
+      },
+    ],
+    related: ['color-picker', 'qr-generator', 'image-compressor'],
+    component: lazy(() => import('../tools/image/FaviconGenerator')),
+  },
+  {
+    slug: 'image-blur',
+    name: 'Image Blur',
+    category: 'image',
+    tagline: 'Blur any image — control the strength, keep the rest private.',
+    description:
+      'Apply a Gaussian blur to an image with a strength slider, then download it as PNG, JPEG or WebP. Useful for background photos, hiding sensitive details, and soft-focus effects. All in-browser.',
+    icon: '🌫️',
+    clientOnly: true,
+    tags: ['image blur', 'blur photo', 'gaussian blur', 'fuzz image', 'hide details', 'background blur', 'photo effect'],
+    aliases: ['blur an image', 'blur photo tool', 'gaussian blur online', 'fuzzy photo'],
+    steps: ['Drop an image.', 'Set the blur strength and format.', 'Blur and download.'],
+    features: [
+      '0–60 px strength slider',
+      'PNG, JPEG or WebP output',
+      'Side-by-side original/result preview',
+      'No upload — processed on your device',
+    ],
+    faq: [
+      {
+        q: 'Does blurring remove metadata too?',
+        a: 'The image is re-encoded, so EXIF/GPS metadata does not carry over to the output — a nice privacy side effect.',
+      },
+      {
+        q: 'Why does my blurred JPEG look blocky at the edges?',
+        a: 'Blur samples outside the edge with transparency; JPEG has no alpha, so edges can shift. PNG keeps alpha and avoids this.',
+      },
+    ],
+    related: ['image-compressor', 'image-metadata-cleaner', 'passport-photo'],
+    component: lazy(() => import('../tools/image/BlurImage')),
+  },
+  {
+    slug: 'passport-photo',
+    name: 'Passport Photo Maker',
+    category: 'image',
+    tagline: '35×45 mm passport/ID photos at 300 DPI, cut from your own photo.',
+    description:
+      'Turn a phone photo into a compliant 35×45 mm ID photo: centered cover crop with fine horizontal/vertical control, 300 DPI output (413×531 px), plus a 2×2 sheet ready for print shops.',
+    icon: '🪪',
+    clientOnly: true,
+    tags: ['passport photo', 'id photo', '35x45', 'visa photo', 'driver licence photo', 'photo sheet', 'nigeria passport photo'],
+    aliases: ['passport photo maker', 'make a 35x45 photo', 'id photo from phone camera', 'visa photo size'],
+    steps: ['Drop your photo.', 'Nudge the crop with the sliders.', 'Download the single photo or the 2×2 sheet.'],
+    features: [
+      '35×45 mm at 300 DPI (413×531 px)',
+      'Fine horizontal/vertical centering',
+      'Single photo or 2×2 print sheet',
+      'JPEG or PNG output',
+    ],
+    faq: [
+      {
+        q: 'Will a print shop accept the file?',
+        a: 'Yes — 300 DPI at the exact 35×45 mm size is the standard requirement. The 2×2 sheet saves you money if the shop charges per photo.',
+      },
+      {
+        q: 'What about background color?',
+        a: 'This tool cuts and sizes your photo; it does not change the background. If your requirements demand a plain white/cream backdrop, shoot against one or use a photo editor for the background swap.',
+      },
+    ],
+    related: ['image-cropper', 'image-resizer', 'image-blur'],
+    component: lazy(() => import('../tools/image/PassportPhoto')),
+  },
+
+  /* --------------------- Phase 3 — PDF tools ------------------------- */
+  {
+    slug: 'pdf-page-organizer',
+    name: 'PDF Page Organizer',
+    category: 'pdf',
+    tagline: 'Reorder, remove and re-save PDF pages — no upload.',
+    description:
+      'Fix a scrambled PDF: move pages up or down, delete the ones you don’t need, reset to the original order, and save a clean reordered copy. Everything happens in your browser.',
+    icon: '🗂️',
+    clientOnly: true,
+    tags: ['pdf page organizer', 'reorder pdf pages', 'pdf page order', 'remove pages', 'pdf editor', 'arrange pages', 'move pages'],
+    aliases: ['reorder pdf pages', 'organize pdf pages', 'change pdf page order', 'pdf page manager'],
+    steps: ['Add a PDF.', 'Move or remove pages until the order is right.', 'Save and download the reordered PDF.'],
+    features: [
+      'Move pages up/down, remove pages',
+      'One-click reset to original order',
+      'Shows each page’s size',
+      '100% local processing',
+    ],
+    faq: [
+      {
+        q: 'Why not drag and drop?',
+        a: 'Arrow buttons are faster for the common cases (swap, move a few pages) and work identically on touch screens. Drag-reorder is on the roadmap.',
+      },
+      {
+        q: 'Are annotations preserved?',
+        a: 'Pages are copied whole (text, images, vectors), so most annotations survive. Signature fields may not — test important documents first.',
+      },
+    ],
+    related: ['pdf-page-deleter', 'pdf-splitter', 'pdf-rotator'],
+    component: lazy(() => import('../tools/pdf/PageOrganizer')),
+  },
+  {
+    slug: 'pdf-to-image',
+    name: 'PDF to Image',
+    category: 'pdf',
+    tagline: 'Render PDF pages to PNG or JPEG, any resolution.',
+    description:
+      'Convert each page of a PDF into a high-resolution image: choose 1×–4× resolution and PNG or JPEG, preview every page, and download them individually or all at once.',
+    icon: '🖼️',
+    clientOnly: true,
+    tags: ['pdf to image', 'pdf to png', 'pdf to jpg', 'pdf to jpeg', 'render pdf', 'convert pdf pages', 'pdf screenshot'],
+    aliases: ['pdf to image', 'convert pdf to png', 'pdf to jpg converter', 'export pdf pages as images'],
+    steps: ['Add a PDF.', 'Choose resolution and format.', 'Convert, preview, download pages.'],
+    features: [
+      '1×–4× resolution (up to ~288 DPI)',
+      'PNG or JPEG output',
+      'Live per-page previews',
+      'Download one page or all',
+    ],
+    faq: [
+      {
+        q: 'Which resolution should I pick?',
+        a: '2× (≈144 DPI) is sharp on screen and fine for most print. 3–4× for large-format printing or heavy zooming.',
+      },
+      {
+        q: 'Why are transparent pages white in JPEG?',
+        a: 'JPEG has no transparency, so the background is filled white (the standard behavior). Choose PNG if you need alpha.',
+      },
+    ],
+    related: ['images-to-pdf', 'pdf-splitter', 'pdf-page-organizer'],
+    component: lazy(() => import('../tools/pdf/PdfToImage')),
+  },
+
+  /* ------------------- Phase 3 — Marketing tools --------------------- */
+  {
+    slug: 'og-image-generator',
+    name: 'Open Graph Image Generator',
+    category: 'marketing',
+    tagline: 'The 1200×630 link preview image your posts deserve.',
+    description:
+      'Generate the image that appears when your link is shared on Facebook, X, LinkedIn and WhatsApp: brand color, title, subtitle and URL strip, rendered at the exact 1200×630 standard — with the meta tags to go with it.',
+    icon: '🔗',
+    clientOnly: true,
+    tags: ['og image', 'open graph', 'social preview', 'link card', 'share image', 'meta og image', '1200x630'],
+    aliases: ['open graph image generator', 'social share image maker', 'og image 1200x630', 'link preview image'],
+    steps: ['Enter title, subtitle, brand and color.', 'Generate the 1200×630 image.', 'Download the PNG + copy the meta tags.'],
+    features: [
+      'Exact 1200×630 OG standard',
+      'Custom background color',
+      'Auto text wrapping',
+      'Ready-to-paste <meta> tags',
+    ],
+    faq: [
+      {
+        q: 'Do I need a separate image per page?',
+        a: 'Ideally yes — each page’s share card should match its content. This tool makes each one in seconds; a site-wide version can be automated later.',
+      },
+      {
+        q: 'What if my title is too long?',
+        a: 'Text wraps automatically and caps at four title lines, so long headlines still render cleanly.',
+      },
+    ],
+    related: ['youtube-thumbnail-maker', 'social-image-resizer', 'meta-tag-generator'],
+    component: lazy(() => import('../tools/marketing/OgImage')),
+  },
+  {
+    slug: 'youtube-thumbnail-maker',
+    name: 'YouTube Thumbnail Maker',
+    category: 'marketing',
+    tagline: 'Bold 1280×720 thumbnails with your text and photo.',
+    description:
+      'Create a click-worthy YouTube thumbnail: drop in a background photo (or use a clean gradient), add bold outlined text in your accent color, control darkening and font size, and export at exactly 1280×720.',
+    icon: '▶️',
+    clientOnly: true,
+    tags: ['youtube thumbnail', 'thumbnail maker', '1280x720', 'video thumbnail', 'thumbnail text', 'youtube branding'],
+    aliases: ['youtube thumbnail maker', 'make a thumbnail', 'video thumbnail generator', 'youtube thumbnail text'],
+    steps: ['Add a background photo (optional).', 'Set text, colors and font size.', 'Generate and download the 1280×720 JPEG.'],
+    features: [
+      'Exact 1280×720 YouTube size',
+      'Background photo with cover-crop + darkening',
+      'Bold outlined text for any background',
+      'Adjustable font size (48–180 px)',
+    ],
+    faq: [
+      {
+        q: 'Why is the text outlined?',
+        a: 'A dark outline keeps big text readable over any photo — the standard trick professional thumbnails use.',
+      },
+      {
+        q: 'Will YouTube accept the file?',
+        a: 'Yes: JPEG at 1280×720 within YouTube’s 2 MB limit. If yours is heavier, run it through the Image Compressor first.',
+      },
+    ],
+    related: ['og-image-generator', 'social-image-resizer', 'image-compressor'],
+    component: lazy(() => import('../tools/marketing/YoutubeThumbnail')),
+  },
+  {
+    slug: 'social-image-resizer',
+    name: 'Social Image Resizer',
+    category: 'marketing',
+    tagline: 'One image, every platform’s exact dimensions.',
+    description:
+      'Resize one image for all the networks at once: Instagram square/portrait/story, Facebook, X, LinkedIn and YouTube — center-cropped to each platform’s exact aspect ratio, ready to download.',
+    icon: '📐',
+    clientOnly: true,
+    tags: ['social media resize', 'instagram size', 'facebook image size', 'linkedin image', 'twitter image', 'story size', 'image dimensions'],
+    aliases: ['social image resizer', 'resize for instagram', 'facebook image dimensions', 'instagram story size'],
+    steps: ['Drop your image.', 'Tick the platforms you need.', 'Resize and download them all.'],
+    features: [
+      '7 platform presets (IG, FB, X, LinkedIn, YT)',
+      'Center cover-crop to each aspect ratio',
+      'Batch download',
+      'Quality JPEG output',
+    ],
+    faq: [
+      {
+        q: 'Does it stretch my image?',
+        a: 'No — it crops (never distorts). Center-crop keeps the middle of the frame; if your subject is off-center, compose it centrally before uploading.',
+      },
+      {
+        q: 'Which size is best for Instagram posts?',
+        a: '1080×1350 (portrait) shows the largest in the feed; 1080×1080 is the classic square. Both are included.',
+      },
+    ],
+    related: ['image-resizer', 'og-image-generator', 'youtube-thumbnail-maker'],
+    component: lazy(() => import('../tools/marketing/SocialImageResizer')),
+  },
+  {
+    slug: 'robots-txt-generator',
+    name: 'robots.txt Generator',
+    category: 'marketing',
+    tagline: 'A correct robots.txt in seconds — allows, disallows and sitemaps.',
+    description:
+      'Build a valid robots.txt without guessing the syntax: toggle Allow/Disallow paths, list your sitemap URLs, add a comment, and copy or download the finished file.',
+    icon: '🤖',
+    clientOnly: true,
+    tags: ['robots.txt', 'robots generator', 'disallow path', 'sitemap in robots', 'seo basics', 'crawler rules', 'block path'],
+    aliases: ['robots.txt generator', 'make a robots txt', 'robots disallow generator', 'create robots file'],
+    steps: ['Set your Allow/Disallow paths and sitemap URLs.', 'Review the generated file.', 'Copy or download robots.txt.'],
+    features: [
+      'Allow-all with per-path Disallow rules',
+      'Multiple sitemap URLs',
+      'Optional comment header',
+      'Live preview of the exact file',
+    ],
+    faq: [
+      {
+        q: 'Should I block my admin area?',
+        a: 'Blocking with Disallow stops crawlers from indexing it, but it does not protect it — real security comes from authentication. Never rely on robots.txt for privacy.',
+      },
+      {
+        q: '“Disallow: /” vs “Disallow: /private”?',
+        a: 'The first blocks the entire site from indexing (rarely what you want); the second blocks only the /private path while the rest is crawlable.',
+      },
+    ],
+    related: ['sitemap-generator', 'meta-tag-generator', 'url-encoder'],
+    component: lazy(() => import('../tools/marketing/RobotsTxt')),
+  },
+  {
+    slug: 'sitemap-generator',
+    name: 'Sitemap Generator',
+    category: 'marketing',
+    tagline: 'Valid XML sitemaps from a list of URLs.',
+    description:
+      'Paste your URLs and get a valid XML sitemap: automatic validation (http/https only, de-duplicated), optional lastmod dates, and changefreq/priority hints. Download and upload straight away.',
+    icon: '🗺️',
+    clientOnly: true,
+    tags: ['sitemap', 'xml sitemap', 'sitemap generator', 'url list', 'seo', 'lastmod', 'search engine'],
+    aliases: ['sitemap generator', 'create xml sitemap', 'make a sitemap from urls', 'sitemap xml maker'],
+    steps: ['Paste your URLs (one per line).', 'Optionally add lastmod + hints.', 'Download sitemap.xml.'],
+    features: [
+      'Validates and de-duplicates URLs',
+      'Optional lastmod, changefreq, priority',
+      'Instant XML preview',
+      'Download as ready-to-upload file',
+    ],
+    faq: [
+      {
+        q: 'How many URLs can a sitemap hold?',
+        a: '50,000 URLs or 50 MB per file. If you exceed that, split into multiple sitemaps and a sitemap index — the file format supports it.',
+      },
+      {
+        q: 'Do search engines require lastmod?',
+        a: 'No, it’s optional. Include it when you know your pages’ update dates; a wrong lastmod is worse than none.',
+      },
+    ],
+    related: ['robots-txt-generator', 'meta-tag-generator', 'url-encoder'],
+    component: lazy(() => import('../tools/marketing/SitemapGenerator')),
+  },
+
+  /* ------------------- Phase 3 — Business tools ---------------------- */
+  {
+    slug: 'purchase-order-generator',
+    name: 'Purchase Order Generator',
+    category: 'business',
+    tagline: 'Professional purchase orders with delivery dates, printable as PDF.',
+    description:
+      'Create clean business purchase orders: supplier and buyer details, priced line items, tax and discount, and a “delivery by” date. Live preview, then print or save as PDF — free and private.',
+    icon: '🧾',
+    clientOnly: true,
+    tags: ['purchase order', 'po generator', 'create po', 'business purchase order', 'pdf po', 'supplier order', 'order form'],
+    aliases: ['purchase order generator', 'create a po', 'purchase order maker', 'po template free'],
+    steps: ['Fill in buyer, supplier and line items.', 'Set the delivery-by date.', 'Print / save as PDF or download HTML.'],
+    features: [
+      'Live preview as you type',
+      '“Delivery by” date field',
+      'Line items with quantity × price, tax, discount',
+      'Any currency symbol',
+      'Print, save as PDF, download HTML',
+    ],
+    faq: [
+      {
+        q: 'How is a PO different from an invoice?',
+        a: 'A PO is what a buyer sends to a supplier to order goods; the supplier later sends an invoice. Same line-item structure, different direction and purpose.',
+      },
+      {
+        q: 'Do I need a unique PO number?',
+        a: 'Yes — number each PO sequentially (PO-001, PO-002…) so both you and the supplier can reference the exact order in emails and disputes.',
+      },
+    ],
+    related: ['invoice-generator', 'delivery-note-generator', 'quotation-generator'],
+    component: lazy(() =>
+      import('../tools/business/DocumentGenerator').then((m) => ({ default: m.PurchaseOrderDoc })),
+    ),
+  },
+  {
+    slug: 'delivery-note-generator',
+    name: 'Delivery Note Generator',
+    category: 'business',
+    tagline: 'Delivery notes with dispatch and receipt signature lines.',
+    description:
+      'Generate a clean delivery note: items and quantities only (no prices), plus signature lines for “dispatched by” and “received by” — the standard document for goods handovers.',
+    icon: '🚚',
+    clientOnly: true,
+    tags: ['delivery note', 'delivery note generator', 'dispatch note', 'goods received note', 'docket', 'delivery slip', 'signature'],
+    aliases: ['delivery note generator', 'make a delivery note', 'dispatch note maker', 'goods received note template'],
+    steps: ['Fill in sender, recipient and items (no prices needed).', 'Add your notes.', 'Print / save as PDF — both parties sign on paper.'],
+    features: [
+      'Quantities without prices',
+      'Dispatched-by and received-by signature lines',
+      'Live preview',
+      'Print, save as PDF, download HTML',
+    ],
+    faq: [
+      {
+        q: 'Why no prices on a delivery note?',
+        a: 'A delivery note proves what was delivered, not what it cost — prices belong on the invoice. Keeping them out also protects pricing if the note is lost.',
+      },
+      {
+        q: 'Is a delivery note a legal document?',
+        a: 'Signed by both parties it’s strong evidence of what was handed over and when. Keep the signed copy with your invoice for disputes or warranties.',
+      },
+    ],
+    related: ['purchase-order-generator', 'invoice-generator', 'receipt-generator'],
+    component: lazy(() =>
+      import('../tools/business/DocumentGenerator').then((m) => ({ default: m.DeliveryNoteDoc })),
+    ),
+  },
+  {
+    slug: 'certificate-generator',
+    name: 'Certificate Generator',
+    category: 'business',
+    tagline: 'Certificates of completion, achievement and appreciation — printable.',
+    description:
+      'Design a classic bordered certificate: title, recipient name, “awarded for” text, two signature lines, date and organisation, in four color themes. Print or save as PDF in one click.',
+    icon: '🏅',
+    clientOnly: true,
+    tags: ['certificate generator', 'certificate of completion', 'award certificate', 'certificate maker', 'training certificate', 'appreciation letter', 'certificate pdf'],
+    aliases: ['certificate generator', 'make a certificate', 'certificate of completion maker', 'award certificate template'],
+    steps: ['Fill in title, recipient and award text.', 'Pick a theme.', 'Print / save as PDF or download HTML.'],
+    features: [
+      'Double-border classic layout',
+      '4 color themes',
+      'Two signature lines + date',
+      'Print, save as PDF, download HTML',
+    ],
+    faq: [
+      {
+        q: 'What paper size will it print on?',
+        a: 'It’s designed for A4/letter landscape. Use your browser’s print dialog, choose landscape, and “Save as PDF” for a digital copy.',
+      },
+      {
+        q: 'Can I add a logo?',
+        a: 'The organisation name appears top and bottom; for a logo, paste the HTML export into your email tool or a document editor and insert it — the layout keeps its borders and fonts.',
+      },
+    ],
+    related: ['invoice-generator', 'quotation-generator', 'qr-generator'],
+    component: lazy(() => import('../tools/business/CertificateGenerator')),
+  },
+
+  /* ------------------- Phase 3 — Utility tools ----------------------- */
+  {
+    slug: 'world-clock',
+    name: 'World Clock',
+    category: 'utility',
+    tagline: 'Live clocks for 16 cities, with day-ahead indicators.',
+    description:
+      'A live world clock covering Lagos, Abuja, London, New York, Tokyo and 11 more: current time, UTC offset, and a clear marker when a city is already a day ahead (or behind) you.',
+    icon: '🌍',
+    clientOnly: true,
+    tags: ['world clock', 'time in other countries', 'utc offset', 'city time', 'clock', 'time zone clock', 'lagos time'],
+    aliases: ['world clock', 'what time is it in tokyo', 'time in new york from lagos', 'utc clock'],
+    steps: ['Open the clock — it runs live.', 'Check any city’s time and offset.'],
+    features: [
+      '16 cities across 5 continents',
+      'Seconds-accurate live ticking',
+      'UTC offset shown per city',
+      'Day-ahead/behind indicators',
+    ],
+    faq: [
+      {
+        q: 'Are daylight-saving changes handled?',
+        a: 'Yes — each city uses its IANA time zone, so DST transitions are applied automatically by your system.',
+      },
+      {
+        q: 'Can I add more cities?',
+        a: 'The 16 shown cover the major business hubs; the Time Zone Converter lets you look up any IANA zone on demand.',
+      },
+    ],
+    related: ['timezone-converter', 'timestamp-converter', 'cron-helper'],
+    component: lazy(() => import('../tools/utility/WorldClock')),
+  },
+  {
+    slug: 'timezone-converter',
+    name: 'Time Zone Converter',
+    category: 'utility',
+    tagline: '“What time is 3 PM in Lagos in London, NY, Dubai…?” — answered.',
+    description:
+      'Pick a date and time in any zone and see it simultaneously in every other zone you choose: exact wall-clock times, UTC offsets, and a copyable table for meeting invites.',
+    icon: '🕘',
+    clientOnly: true,
+    tags: ['timezone converter', 'time zone convert', 'meeting time', 'lagos to new york', 'utc convert', 'what time is it there', 'time difference'],
+    aliases: ['timezone converter', 'convert lagos time to london', 'time zone calculator', 'what time is 3pm in dubai'],
+    steps: ['Set the date/time and its source zone.', 'Tick the zones you need.', 'Read the table (or copy it).'],
+    features: [
+      'Any IANA zone as source (with suggestions)',
+      'Preset targets for common business zones',
+      'UTC offsets shown per row',
+      'Copyable plain-text table',
+    ],
+    faq: [
+      {
+        q: 'I get the “wrong” answer when I pick a time — why?',
+        a: 'Double-check the source zone: the time you enter is interpreted in the zone you selected, not yours. If you meant local time, set the source to your zone.',
+      },
+      {
+        q: 'Does it handle half-hour zones like India?',
+        a: 'Yes — offsets are computed from IANA data, so UTC+5:30 and similar zones are exact.',
+      },
+    ],
+    related: ['world-clock', 'timestamp-converter', 'cron-helper'],
+    component: lazy(() => import('../tools/utility/TimezoneConverter')),
+  },
 ];
 
 export const TOOL_BY_SLUG: Record<string, Tool> = Object.fromEntries(TOOLS.map((t) => [t.slug, t]));

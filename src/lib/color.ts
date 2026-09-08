@@ -159,3 +159,25 @@ export function contrastRatio(a: string, b: string): number | null {
   const [hi, lo] = la > lb ? [la, lb] : [lb, la];
   return (hi + 0.05) / (lo + 0.05);
 }
+
+/** Lighter (tints) and darker (shades) steps of a hex color. Pure. */
+export function tintsAndShades(hex: string, steps = 4): { tints: string[]; shades: string[] } {
+  const rgb = hexToRgb(hex);
+  if (!rgb) return { tints: [], shades: [] };
+  const { h, s, l } = rgbToHsl(rgb);
+  const tints: string[] = [];
+  const shades: string[] = [];
+  for (let i = 1; i <= steps; i++) {
+    tints.push(rgbToHex(hslToRgb({ h, s, l: l + ((100 - l) * i) / steps })));
+    shades.push(rgbToHex(hslToRgb({ h, s, l: (l * (steps - i)) / steps })));
+  }
+  return { tints, shades };
+}
+
+/** Which text color (black or white) gives the better contrast on `hex`. */
+export function readableTextOn(hex: string): 'black' | 'white' {
+  const white = contrastRatio(hex, '#ffffff');
+  const black = contrastRatio(hex, '#000000');
+  if (white === null || black === null) return 'black';
+  return white >= black ? 'white' : 'black';
+}
