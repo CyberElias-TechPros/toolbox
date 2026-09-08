@@ -23,9 +23,19 @@
 - **Business**: Invoice Generator, Receipt Generator
 - **Utility**: Password Generator
 
-## Phase 3 — Expand to 40–60 tools (next)
+## Phase 3 — Expand to 40–60 tools (in progress: 18 shipped in v0.2)
 
-High-impact additions, in rough priority order:
+✅ Shipped in v0.2 (total 47 tools):
+
+- Developer: Hash Generator, Regex Tester, Query String Parser, JSON → CSV, CSV → JSON
+- PDF: Page Deleter, Rotator
+- Image: Metadata Cleaner, Image → Base64, Base64 → Image
+- Marketing: Social Media Text Formatter, Hashtag Generator
+- Business: Quotation Generator
+- Utility: Number to Words, Stopwatch, Countdown Timer, Random Number Generator,
+  Contrast Checker
+
+Remaining (in rough priority order):
 
 - Image: Metadata Cleaner, Image to Base64 / Base64 to Image, Color Picker, Favicon Generator,
   Passport/ID Photo sheet, Blur

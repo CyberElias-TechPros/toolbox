@@ -25,7 +25,7 @@ npm run preview      # serve the production build
 
 ## What’s included (v0.1 — Phase 1 + 2 release)
 
-**29 working tools across 8 categories**, all registry-driven:
+**47 working tools across 8 categories**, all registry-driven:
 
 | Category | Tools |
 | --- | --- |
@@ -105,7 +105,7 @@ src/
 ├── lib/             # pure logic (text, color, units, dates, search, image…) + tests
 ├── components/      # layout, UI kit, tool page template, search
 ├── pages/           # home, all tools, category, tool route, 404
-└── tools/           # the 29 tool components, grouped by category
+└── tools/           # the 47 tool components, grouped by category
 scripts/             # build-time sitemap + registry integrity check
 ```
 

@@ -4,7 +4,7 @@ import { Field, Input, Textarea } from '../../components/ui/fields';
 import { downloadText, uid } from '../../lib/utils';
 import { track } from '../../lib/track';
 
-type Kind = 'invoice' | 'receipt';
+type Kind = 'invoice' | 'receipt' | 'quote';
 type Currency = 'NGN' | 'USD' | 'EUR' | 'GBP';
 const CURRENCY_SYMBOL: Record<Currency, string> = { NGN: '₦', USD: '$', EUR: '€', GBP: '£' };
 
@@ -49,21 +49,25 @@ function money(n: number, currency: Currency): string {
 
 /** Shared engine for the Invoice and Receipt generators. */
 export function DocumentTool({ kind }: { kind: Kind }) {
-  const isInvoice = kind === 'invoice';
   const [s, setS] = useState<DocState>(() => ({
     bizName: 'My Business',
     bizAddress: '123 Example Street\nLagos, Nigeria',
     bizContact: 'hello@mybusiness.com · +234 800 000 0000',
     custName: 'Customer Name',
     custAddress: '',
-    number: isInvoice ? 'INV-001' : 'RCP-001',
+    number: kind === 'invoice' ? 'INV-001' : kind === 'quote' ? 'QTN-001' : 'RCP-001',
     date: today(),
     due: plusDays(14),
     currency: 'NGN',
     items: [{ id: uid(), desc: '', qty: '1', price: '' }],
     discountPct: '0',
     taxPct: '0',
-    notes: isInvoice ? 'Payment due within 14 days. Thank you for your business!' : 'Payment received. Thank you!',
+    notes:
+      kind === 'invoice'
+        ? 'Payment due within 14 days. Thank you for your business!'
+        : kind === 'quote'
+          ? 'This quotation is valid for 14 days. Thank you for your consideration!'
+          : 'Payment received. Thank you!',
   }));
 
   const set = <K extends keyof DocState>(k: K, v: DocState[K]) => setS((prev) => ({ ...prev, [k]: v }));
@@ -83,8 +87,11 @@ export function DocumentTool({ kind }: { kind: Kind }) {
     return { subtotal, discount, tax, total };
   }, [s.items, s.discountPct, s.taxPct]);
 
-  const docTitle = isInvoice ? 'INVOICE' : 'RECEIPT';
-  const dateLabel = isInvoice ? 'Invoice date' : 'Date';
+  const docTitle = kind === 'invoice' ? 'INVOICE' : kind === 'quote' ? 'QUOTATION' : 'RECEIPT';
+  const dateLabel = kind === 'invoice' ? 'Invoice date' : 'Date';
+  const dueLabel = kind === 'quote' ? 'Valid until' : 'Due';
+  const showDue = kind !== 'receipt';
+  const showPaid = kind === 'receipt';
   const fmtDate = (iso: string) => {
     const d = new Date(`${iso}T12:00:00`);
     return Number.isNaN(d.getTime()) ? iso : d.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
@@ -127,11 +134,11 @@ export function DocumentTool({ kind }: { kind: Kind }) {
       <p class="muted" style="margin-top:10px">${escapeHtml(s.bizName)}${s.bizAddress ? `<br/>${escapeHtml(s.bizAddress).replace(/\n/g, '<br/>')}` : ''}${s.bizContact ? `<br/>${escapeHtml(s.bizContact)}` : ''}</p>
     </div>
     <div style="text-align:right">
-      <p class="muted"><strong>${escapeHtml(s.number)}</strong><br/>${dateLabel}: ${fmtDate(s.date)}${isInvoice ? `<br/>Due: ${fmtDate(s.due)}` : ''}</p>
+      <p class="muted"><strong>${escapeHtml(s.number)}</strong><br/>${dateLabel}: ${fmtDate(s.date)}${showDue ? `<br/>${dueLabel}: ${fmtDate(s.due)}` : ''}</p>
       <p class="muted" style="margin-top:12px">Bill to<br/><strong>${escapeHtml(s.custName)}</strong>${s.custAddress ? `<br/>${escapeHtml(s.custAddress).replace(/\n/g, '<br/>')}` : ''}</p>
     </div>
   </div>
-  ${!isInvoice ? '<p class="paid" style="margin-top:16px">✓ PAID</p>' : ''}
+  ${showPaid ? '<p class="paid" style="margin-top:16px">✓ PAID</p>' : ''}
   <table>
     <thead><tr><th>Description</th><th class="r">Qty</th><th class="r">Amount</th></tr></thead>
     <tbody>
@@ -188,9 +195,9 @@ ${rows}
                 <Input type="date" value={s.date} onChange={(e) => set('date', e.target.value)} aria-label="Date" />
               </Field>
             </div>
-            {isInvoice ? (
-              <Field label="Due date">
-                <Input type="date" value={s.due} onChange={(e) => set('due', e.target.value)} aria-label="Due date" />
+            {showDue ? (
+              <Field label={dueLabel}>
+                <Input type="date" value={s.due} onChange={(e) => set('due', e.target.value)} aria-label={dueLabel} />
               </Field>
             ) : null}
             <div className="grid grid-cols-3 gap-4">
@@ -318,13 +325,13 @@ ${rows}
               <p>
                 {dateLabel}: <strong className="text-zinc-900">{fmtDate(s.date)}</strong>
               </p>
-              {isInvoice ? (
+              {showDue ? (
                 <p>
-                  Due: <strong className="text-zinc-900">{fmtDate(s.due)}</strong>
+                  {dueLabel}: <strong className="text-zinc-900">{fmtDate(s.due)}</strong>
                 </p>
-              ) : (
+              ) : showPaid ? (
                 <p className="mt-2 font-bold tracking-[0.2em] text-emerald-600">✓ PAID</p>
-              )}
+              ) : null}
               <p className="mt-3">
                 <span className="text-xs uppercase tracking-wide">Bill to</span>
                 <br />
@@ -400,6 +407,10 @@ export function InvoiceDoc() {
 
 export function ReceiptDoc() {
   return <DocumentTool kind="receipt" />;
+}
+
+export function QuoteDoc() {
+  return <DocumentTool kind="quote" />;
 }
 
 function escapeHtml(s: string): string {
