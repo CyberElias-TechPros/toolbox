@@ -1,0 +1,11 @@
+node_modules/
+dist/
+public/sitemap.xml
+*.local
+.DS_Store
+.env
+.env.*
+!.env.example
+coverage/
+.wrangler/
+.vercel/
