@@ -9,3 +9,8 @@ public/sitemap.xml
 coverage/
 .wrangler/
 .vercel/
+playwright-report/
+test-results/
+
+# Local visual QA artifacts
+.arena/*.png

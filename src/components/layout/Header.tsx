@@ -1,127 +1,102 @@
-import { useState } from 'react';
-import { Link, NavLink } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import { Box, ArrowUpRight, ChevronDown, Moon, Sun, Menu, X, Star } from 'lucide-react';
 import { CATEGORIES } from '../../registry/categories';
 import { useTheme } from '../../lib/theme';
-import { cn } from '../../lib/utils';
-import { SearchBox } from '../SearchBox';
-
-function ThemeToggle() {
-  const [theme, toggle] = useTheme();
-  return (
-    <button
-      onClick={toggle}
-      aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
-      className="flex h-10 w-10 items-center justify-center rounded-xl border border-zinc-200 bg-white text-lg shadow-sm hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900 dark:hover:bg-zinc-800"
-    >
-      {theme === 'dark' ? '☀️' : '🌙'}
-    </button>
-  );
-}
-
+import { ToolIcon } from '../ToolIcon';
 export function Header() {
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [catsOpen, setCatsOpen] = useState(false);
-
+  const [theme, toggle] = useTheme();
+  const [open, setOpen] = useState(false);
+  const [cats, setCats] = useState(false);
+  const { pathname, search } = useLocation();
+  useEffect(() => {
+    setOpen(false);
+    setCats(false);
+  }, [pathname, search]);
+  useEffect(() => {
+    const key = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setOpen(false);
+        setCats(false);
+      }
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        const input = document.querySelector<HTMLInputElement>(
+          'input[aria-label="Search tools"],input[aria-label="Filter tools"]',
+        );
+        if (input) {
+          input.scrollIntoView({ block: 'center' });
+          input.focus();
+        } else window.location.href = '/tools';
+      }
+    };
+    window.addEventListener('keydown', key);
+    return () => window.removeEventListener('keydown', key);
+  }, []);
   return (
-    <header className="sticky top-0 z-50 border-b border-zinc-200/80 bg-white/85 backdrop-blur-md dark:border-zinc-800/80 dark:bg-zinc-950/85">
-      <div className="container-page flex h-16 items-center gap-3">
-        <Link to="/" className="flex shrink-0 items-center gap-2.5" aria-label="ToolBox home">
-          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-600 to-violet-600 text-lg text-white shadow-sm">
-            🧰
+    <header className="site-header">
+      <div className="container-page header-inner">
+        <Link to="/" className="brand" aria-label="Toolbox home">
+          <span className="brand-mark">
+            <Box size={24} strokeWidth={1.7} />
           </span>
-          <span className="hidden text-lg font-bold tracking-tight sm:block">
-            Tool<span className="text-indigo-600 dark:text-indigo-400">Box</span>
-          </span>
+          toolbox<span className="brand-dot">.</span>
         </Link>
-
-        <nav aria-label="Primary" className="hidden items-center gap-1 lg:flex">
-          <NavLink
-            to="/tools"
-            className={({ isActive }) =>
-              cn(
-                'rounded-xl px-3.5 py-2 text-sm font-medium transition-colors',
-                isActive ? 'bg-indigo-50 text-indigo-700 dark:bg-indigo-950/60 dark:text-indigo-300' : 'text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-zinc-50',
-              )
-            }
-          >
+        <nav className={`main-nav ${open ? 'nav-open' : ''}`} aria-label="Primary">
+          <Link className={pathname === '/tools' && !search ? 'active' : ''} to="/tools">
             All tools
-          </NavLink>
-          <div className="relative">
-            <button
-              onClick={() => setCatsOpen((v) => !v)}
-              aria-expanded={catsOpen}
-              className="flex items-center gap-1 rounded-xl px-3.5 py-2 text-sm font-medium text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-zinc-50"
-            >
-              Categories <span aria-hidden className="text-xs">▾</span>
+          </Link>
+          <div className="nav-categories">
+            <button onClick={() => setCats(!cats)} aria-expanded={cats}>
+              Categories <ChevronDown size={13} />
             </button>
-            {catsOpen ? (
-              <div className="absolute left-0 top-full mt-2 w-72 rounded-2xl border border-zinc-200 bg-white p-2 shadow-card-hover dark:border-zinc-800 dark:bg-zinc-900">
-                {CATEGORIES.map((c) => (
-                  <Link
-                    key={c.id}
-                    to={`/category/${c.id}`}
-                    onClick={() => setCatsOpen(false)}
-                    className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-zinc-700 hover:bg-zinc-50 dark:text-zinc-200 dark:hover:bg-zinc-800/70"
-                  >
-                    <span aria-hidden>{c.icon}</span>
-                    <span>
-                      <span className="block font-medium">{c.name}</span>
-                      <span className="block text-xs text-zinc-500 dark:text-zinc-400">{c.tagline}</span>
-                    </span>
-                  </Link>
-                ))}
-              </div>
-            ) : null}
+            {cats && (
+              <>
+                <button className="menu-scrim" aria-label="Close categories" onClick={() => setCats(false)} />
+                <div className="category-menu">
+                  {CATEGORIES.map((c) => (
+                    <Link key={c.id} to={`/category/${c.id}`}>
+                      <span className={`tool-icon tone-${c.id}`}>
+                        <ToolIcon category={c.id} size={18} />
+                      </span>
+                      {c.name.replace(' Tools', '')}
+                      <ArrowUpRight size={14} />
+                    </Link>
+                  ))}
+                </div>
+              </>
+            )}
           </div>
-        </nav>
-
-        <div className="ml-auto hidden w-64 md:block xl:w-80">
-          <SearchBox />
-        </div>
-
-        <div className="ml-auto flex items-center gap-2 md:ml-0">
-          <ThemeToggle />
-          <button
-            className="flex h-10 w-10 items-center justify-center rounded-xl border border-zinc-200 bg-white text-lg shadow-sm lg:hidden dark:border-zinc-700 dark:bg-zinc-900"
-            aria-label={menuOpen ? 'Close menu' : 'Open menu'}
-            aria-expanded={menuOpen}
-            onClick={() => setMenuOpen((v) => !v)}
+          <Link className={search.includes('view=new') ? 'active' : ''} to="/tools?view=new">
+            What’s new <span className="nav-new">NEW</span>
+          </Link>
+          <Link
+            to="/tools?view=favorites"
+            className={`favorites-nav ${search.includes('view=favorites') ? 'active' : ''}`}
           >
-            {menuOpen ? '✕' : '☰'}
+            <Star size={14} /> Favorites
+          </Link>
+        </nav>
+        <div className="header-actions">
+          <button
+            className="theme-button"
+            onClick={toggle}
+            aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+          >
+            {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
+          </button>
+          <Link className="header-cta" to="/tools">
+            Explore tools <ArrowUpRight size={16} />
+          </Link>
+          <button
+            className="mobile-menu"
+            aria-label={open ? 'Close menu' : 'Open menu'}
+            onClick={() => setOpen(!open)}
+          >
+            {open ? <X /> : <Menu />}
           </button>
         </div>
       </div>
-
-      {/* Mobile search */}
-      <div className="container-page pb-3 md:hidden">
-        <SearchBox onNavigate={() => setMenuOpen(false)} />
-      </div>
-
-      {/* Mobile menu */}
-      {menuOpen ? (
-        <nav aria-label="Mobile" className="border-t border-zinc-200 bg-white lg:hidden dark:border-zinc-800 dark:bg-zinc-950">
-          <div className="container-page grid gap-1 py-3">
-            <Link
-              to="/tools"
-              onClick={() => setMenuOpen(false)}
-              className="rounded-xl px-3 py-2.5 text-sm font-medium text-zinc-800 hover:bg-zinc-50 dark:text-zinc-100 dark:hover:bg-zinc-900"
-            >
-              🧰 All tools
-            </Link>
-            {CATEGORIES.map((c) => (
-              <Link
-                key={c.id}
-                to={`/category/${c.id}`}
-                onClick={() => setMenuOpen(false)}
-                className="rounded-xl px-3 py-2.5 text-sm text-zinc-700 hover:bg-zinc-50 dark:text-zinc-200 dark:hover:bg-zinc-900"
-              >
-                <span aria-hidden className="mr-2">{c.icon}</span>
-                {c.name}
-              </Link>
-            ))}
-          </div>
-        </nav>
-      ) : null}
     </header>
   );
 }

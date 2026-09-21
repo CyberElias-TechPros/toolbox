@@ -1,13 +1,23 @@
 {
-  "name": "ToolBox — Everyday Tools, All in One Place",
-  "short_name": "ToolBox",
+  "name": "Toolbox \u2014 Small tools. Big possibilities.",
+  "short_name": "Toolbox",
   "description": "Free, fast, private browser tools: images, PDF, text, developer, calculators, marketing and business tools.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#fafafa",
-  "theme_color": "#4f46e5",
+  "background_color": "#f8f8f4",
+  "theme_color": "#d95828",
   "icons": [
-    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
-    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
   ]
 }

@@ -1,129 +1,276 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import {
+  ArrowRight,
+  ArrowUpRight,
+  ShieldCheck,
+  Zap,
+  Check,
+  SlidersHorizontal,
+  Sparkles,
+  FileText,
+  Command,
+} from 'lucide-react';
 import { CATEGORIES } from '../registry/categories';
-import { featuredTools, TOOLS, toolsByCategory } from '../registry';
+import { TOOLS, getTool } from '../registry';
 import { SearchBox } from '../components/SearchBox';
 import { ToolCard } from '../components/ToolCard';
+import { HeroArt } from '../components/HeroArt';
+import { ToolIcon } from '../components/ToolIcon';
 import { usePageMeta } from '../lib/meta';
-
-const QUICK_HINTS = ['compress an image', 'convert PDF', 'calculate percentage', 'format JSON', 'create QR code'];
-
+const popular = [
+  'word-to-pdf',
+  'combine-word-to-pdf',
+  'image-compressor',
+  'pdf-merger',
+  'image-converter',
+  'qr-generator',
+  'json-formatter',
+  'word-counter',
+];
 export function HomePage() {
   usePageMeta(
-    'ToolBox — Everyday Tools, All in One Place',
-    'Free, fast, private tools that work instantly in your browser. Compress images, merge PDFs, format JSON, calculate percentages, generate QR codes, invoices and more — no sign-up required.',
+    'Toolbox — Less busywork. More possibility.',
+    `${TOOLS.length} free, private tools for documents, images, code and everything in between.`,
     '/',
   );
-  const featured = featuredTools().slice(0, 6); // 3×2 grid — no orphans
-
+  const [category, setCategory] = useState('all');
+  const [sort, setSort] = useState('popular');
+  const selected =
+    category === 'all'
+      ? popular.map((s) => getTool(s)).filter((t): t is NonNullable<typeof t> => !!t)
+      : TOOLS.filter((t) => t.category === category).slice(0, 8);
+  const tools = sort === 'az' ? [...selected].sort((a, b) => a.name.localeCompare(b.name)) : selected;
   return (
-    <div className="animate-fade-in">
-      {/* Hero */}
-      <section className="relative overflow-hidden">
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(60%_50%_at_50%_0%,rgb(99_102_241/0.14),transparent_70%)]"
-        />
-        <div className="container-page flex flex-col items-center pb-14 pt-16 text-center sm:pt-24">
-          <p className="mb-5 inline-flex items-center gap-2 rounded-full border border-indigo-200 bg-indigo-50 px-4 py-1.5 text-xs font-medium text-indigo-700 dark:border-indigo-900 dark:bg-indigo-950/60 dark:text-indigo-300">
-            <span aria-hidden>⚡</span> No sign-up. No upload. Instant results.
-          </p>
-          <h1 className="max-w-3xl text-4xl font-extrabold leading-[1.08] tracking-tight sm:text-5xl">
-            The tools you need.
-            <span className="block bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent dark:from-indigo-400 dark:to-violet-400">
-              All in one place.
-            </span>
+    <div className="home-page">
+      <section className="container-page hero">
+        <div className="hero-copy">
+          <div className="eyebrow">
+            <span className="status-dot" /> YOUR EVERYDAY, UPGRADED
+          </div>
+          <h1>
+            Small tools.
+            <br />
+            Big <span className="serif-word">possibilities.</span>
           </h1>
-          <p className="mt-5 max-w-xl text-base leading-relaxed text-zinc-600 sm:text-lg dark:text-zinc-400">
-            Convert, compress, calculate, generate, format and create — quickly and privately from your browser.
+          <p>
+            For the things between you and your next big thing.
+            <br className="desktop-break" /> Convert, create, and get it done. All in one little box.
           </p>
-
-          <div className="mt-8 w-full max-w-xl">
+          <div className="hero-search">
             <SearchBox size="lg" />
-            <div className="mt-3 flex flex-wrap items-center justify-center gap-2 text-xs text-zinc-500 dark:text-zinc-400">
-              <span>Try:</span>
-              {QUICK_HINTS.map((h) => (
-                <Link
-                  key={h}
-                  to="/tools"
-                  state={{ q: h }}
-                  className="rounded-full border border-zinc-200 bg-white px-3 py-1 hover:border-indigo-300 hover:text-indigo-600 dark:border-zinc-700 dark:bg-zinc-900 dark:hover:border-indigo-700 dark:hover:text-indigo-400"
-                >
-                  “{h}”
-                </Link>
-              ))}
-            </div>
+            <kbd>
+              <Command size={12} /> K
+            </kbd>
           </div>
-
-          {/* Stats strip */}
-          <dl className="mt-10 flex flex-wrap items-center justify-center gap-x-10 gap-y-4">
-            {[
-              { value: `${TOOLS.length}`, label: 'tools, one search' },
-              { value: `${CATEGORIES.length}`, label: 'categories' },
-              { value: '0', label: 'servers touched' },
-              { value: '100%', label: 'free, no account' },
-            ].map((s) => (
-              <div key={s.label} className="text-center">
-                <dt className="sr-only">{s.label}</dt>
-                <dd className="text-2xl font-extrabold tracking-tight text-zinc-900 tabular-nums dark:text-zinc-50">{s.value}</dd>
-                <dd className="mt-0.5 text-xs font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400">{s.label}</dd>
-              </div>
-            ))}
-          </dl>
-
-          {/* Popular tools */}
-          <div className="mt-12 grid w-full gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {featured.map((t) => (
-              <ToolCard key={t.slug} tool={t} />
-            ))}
+          <div className="try-links">
+            <span>Try</span>
+            <Link to="/tools/word-to-pdf">
+              Word to PDF <ArrowUpRight size={11} />
+            </Link>
+            <Link to="/tools/image-compressor">
+              Compress image <ArrowUpRight size={11} />
+            </Link>
+            <Link to="/tools/pdf-merger">
+              Merge PDFs <ArrowUpRight size={11} />
+            </Link>
+          </div>
+          <div className="hero-trust">
+            <span>
+              <Check size={13} /> Completely free
+            </span>
+            <span>
+              <Check size={13} /> No sign-up
+            </span>
+            <span>
+              <Check size={13} /> Yours, privately
+            </span>
           </div>
         </div>
+        <HeroArt />
       </section>
-
-      {/* Value props */}
-      <section className="border-y border-zinc-200 bg-white py-12 dark:border-zinc-800 dark:bg-zinc-900/40">
-        <div className="container-page grid gap-8 sm:grid-cols-3">
-          {[
-            { icon: '🔒', title: 'Private by design', text: 'Files are processed on your device. No upload, no server, no waiting, no account.' },
-            { icon: '⚡', title: 'Instant & free', text: 'Every tool loads and runs in seconds, right in your browser. Free to use, no limits on the basics.' },
-            { icon: '🧩', title: 'One coherent platform', text: `${TOOLS.length} tools, one design, one search. Chain tasks together without leaving the site.` },
-          ].map((v) => (
-            <div key={v.title} className="text-center sm:text-left">
-              <span aria-hidden className="text-2xl">
-                {v.icon}
-              </span>
-              <h2 className="mt-2 text-sm font-semibold">{v.title}</h2>
-              <p className="mt-1.5 text-sm leading-relaxed text-zinc-500 dark:text-zinc-400">{v.text}</p>
-            </div>
-          ))}
+      <div className="trust-strip">
+        <div className="container-page">
+          <span>
+            <strong>
+              {TOOLS.length}
+              <i>+</i>
+            </strong>{' '}
+            tools. Infinite potential.
+          </span>
+          <span>
+            <ShieldCheck /> Your files never leave your device
+          </span>
+          <span>
+            <Zap /> Less waiting. More doing.
+          </span>
+          <span className="trust-last">
+            <span className="status-dot" /> Always free. Actually.
+          </span>
         </div>
-      </section>
-
-      {/* Categories */}
-      <section className="container-page py-14">
-        <div className="flex items-end justify-between">
-          <h2 className="text-2xl font-bold tracking-tight">Browse by category</h2>
-          <Link to="/tools" className="text-sm font-medium text-indigo-600 hover:underline dark:text-indigo-400">
-            All {TOOLS.length} tools →
+      </div>
+      <section className="container-page tools-section" id="discover">
+        <div className="section-heading">
+          <div>
+            <div className="eyebrow muted">THE RIGHT TOOL, RIGHT HERE</div>
+            <h2>
+              A good place to <em>start.</em>
+            </h2>
+          </div>
+          <Link className="text-link" to="/tools">
+            Explore all {TOOLS.length} tools <ArrowUpRight size={17} />
           </Link>
         </div>
-        <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="filter-row">
+          <div className="category-tabs">
+            <button className={category === 'all' ? 'selected' : ''} onClick={() => setCategory('all')}>
+              <Sparkles size={15} /> Popular
+            </button>
+            {CATEGORIES.map((c) => (
+              <button
+                key={c.id}
+                className={category === c.id ? 'selected' : ''}
+                onClick={() => setCategory(c.id)}
+              >
+                <ToolIcon category={c.id} size={15} />
+                {
+                  {
+                    pdf: 'PDF & Docs',
+                    image: 'Image',
+                    text: 'Text',
+                    developer: 'Developer',
+                    calculator: 'Calculators',
+                    marketing: 'Marketing',
+                    business: 'Business',
+                    utility: 'Utilities',
+                  }[c.id]
+                }
+              </button>
+            ))}
+          </div>
+          <label className="sort-button">
+            <SlidersHorizontal size={15} />
+            <select aria-label="Sort tools" value={sort} onChange={(e) => setSort(e.target.value)}>
+              <option value="popular">Popular</option>
+              <option value="az">A–Z</option>
+            </select>
+          </label>
+        </div>
+        <div className="home-tools-grid" key={category}>
+          {tools.map((t) => (
+            <ToolCard key={t.slug} tool={t} />
+          ))}
+        </div>
+        <div className="browse-bottom">
+          <span>A tool for just about everything.</span>
+          <Link to={category === 'all' ? '/tools' : `/category/${category}`}>
+            Find yours <ArrowRight size={15} />
+          </Link>
+        </div>
+      </section>
+      <section className="container-page">
+        <div className="document-feature">
+          <div className="feature-copy">
+            <span className="feature-eyebrow">
+              <span /> FRESH IN THE BOX
+            </span>
+            <h2>
+              Many documents.
+              <br />
+              <em>One happy ending.</em>
+            </h2>
+            <p>
+              Turn your Word documents into one polished PDF.
+              <br />
+              Drop them in. Put them in order. And you’re done.
+            </p>
+            <Link to="/tools/combine-word-to-pdf">
+              Combine Word to PDF <ArrowUpRight size={17} />
+            </Link>
+            <span className="feature-note">
+              <ShieldCheck size={13} /> On your device. Off everyone else’s radar.
+            </span>
+          </div>
+          <div className="feature-flow">
+            <div className="flow-docs">
+              <div className="mini-doc">
+                <span>W</span>
+                <i />
+                <i />
+                <i />
+                <small>Proposal.docx</small>
+              </div>
+              <div className="mini-doc second">
+                <span>W</span>
+                <i />
+                <i />
+                <i />
+                <small>Appendix.docx</small>
+              </div>
+            </div>
+            <div className="flow-arrow">
+              <span />
+              <ArrowRight size={23} />
+              <span />
+            </div>
+            <div className="flow-pdf">
+              <FileText size={29} />
+              <strong>PDF</strong>
+              <i />
+              <i />
+              <small>All together. Better.</small>
+              <span className="flow-success">
+                <Check size={15} />
+              </span>
+            </div>
+            <div className="flow-caption">
+              01. ADD <span>02. ARRANGE</span> 03. DOWNLOAD
+            </div>
+          </div>
+        </div>
+      </section>
+      <section className="container-page category-section">
+        <div className="section-heading">
+          <div>
+            <div className="eyebrow muted">A BOX FOR EVERY KIND OF BUSY</div>
+            <h2>
+              What’s on your <em>list?</em>
+            </h2>
+          </div>
+          <Link className="text-link" to="/tools">
+            Browse the collection <ArrowUpRight size={17} />
+          </Link>
+        </div>
+        <div className="category-grid">
           {CATEGORIES.map((c) => (
-            <Link
-              key={c.id}
-              to={`/category/${c.id}`}
-              className="group rounded-2xl border border-zinc-200 bg-white p-5 shadow-card transition-all hover:-translate-y-0.5 hover:shadow-card-hover dark:border-zinc-800 dark:bg-zinc-900"
-            >
-              <span aria-hidden className="text-2xl">
-                {c.icon}
+            <Link to={`/category/${c.id}`} key={c.id}>
+              <span className={`tool-icon tone-${c.id}`}>
+                <ToolIcon category={c.id} />
               </span>
-              <h3 className="mt-3 text-sm font-semibold group-hover:text-indigo-600 dark:group-hover:text-indigo-400">{c.name}</h3>
-              <p className="mt-1 line-clamp-2 text-xs leading-relaxed text-zinc-500 dark:text-zinc-400">{c.tagline}</p>
-              <span className="mt-3 inline-block text-xs font-medium text-indigo-600 dark:text-indigo-400">
-                {toolsByCategory(c.id).length} tools →
-              </span>
+              <div>
+                <h3>{c.name.replace(' Tools', '').replace(' & Converter', '')}</h3>
+                <p>{TOOLS.filter((t) => t.category === c.id).length} little problem-solvers</p>
+              </div>
+              <ArrowUpRight size={18} />
             </Link>
           ))}
         </div>
+      </section>
+      <section className="container-page philosophy">
+        <span className="philosophy-mark">✳</span>
+        <h2>
+          Less jumping between tabs.
+          <br />
+          <em>More getting on with life.</em>
+        </h2>
+        <p>
+          No installs. No “just one more account.” No catch.
+          <br />
+          Just thoughtfully made tools, ready when you are.
+        </p>
+        <Link to="/tools" className="orange-button">
+          Open your toolbox <ArrowUpRight size={17} />
+        </Link>
       </section>
     </div>
   );

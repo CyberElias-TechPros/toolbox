@@ -3,17 +3,17 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <title>ToolBox — Everyday Tools, All in One Place</title>
+    <title>Toolbox — Small tools. Big possibilities.</title>
     <meta
       name="description"
       content="Free, fast, private tools that work instantly in your browser. Compress images, merge PDFs, format JSON, calculate percentages, generate QR codes, invoices and more — no sign-up required."
     />
-    <meta name="theme-color" content="#4f46e5" />
+    <meta name="theme-color" content="#d95828" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="manifest" href="/manifest.webmanifest" />
     <meta property="og:type" content="website" />
-    <meta property="og:site_name" content="ToolBox" />
-    <meta property="og:title" content="ToolBox — Everyday Tools, All in One Place" />
+    <meta property="og:site_name" content="Toolbox" />
+    <meta property="og:title" content="Toolbox — Small tools. Big possibilities." />
     <meta
       property="og:description"
       content="Convert, compress, calculate, generate, format and create — quickly and privately from your browser."
@@ -22,20 +22,12 @@
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta name="twitter:card" content="summary_large_image" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
-      rel="stylesheet"
-    />
     <script>
       // Apply saved (or system) theme before first paint to avoid a flash.
       (function () {
         try {
           var stored = localStorage.getItem('toolbox-theme');
-          var dark = stored
-            ? stored === 'dark'
-            : window.matchMedia('(prefers-color-scheme: dark)').matches;
+          var dark = stored ? stored === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches;
           if (dark) document.documentElement.classList.add('dark');
         } catch (e) {}
       })();

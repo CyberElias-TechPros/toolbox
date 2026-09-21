@@ -1,151 +1,138 @@
-# 🧰 ToolBox — Everyday Tools, All in One Place
+# Toolbox — Small tools. Big possibilities.
 
-**Free. Fast. Private. No unnecessary sign-ups.**
+**138 free browser tools across eight categories. No accounts. No file uploads.**
 
-ToolBox is a single “everything utility platform”: fast browser tools for everyday users, developers,
-students, creators and small businesses. Every tool in the current release runs **100% client-side** —
-files are processed in the browser and never uploaded, so the core platform costs almost nothing to run
-and works even on flaky connections.
+A private workspace for converting documents, editing PDFs and images, working with spreadsheets,
+transforming text and code, and everyday calculations. Version 0.2 adds **64 tools** to the existing 74,
+plus a new responsive visual identity with self-hosted typography, dimensional interactive artwork,
+dark mode, motion with reduced-motion support, saved favorites, and improved search.
 
-> Compress an image → convert it → generate a QR code → create an invoice → download a PDF.
-> All in one place, without an account.
+## Start locally
 
----
-
-## Quick start
+Requires **Node.js 22.12+** (Node 22 LTS recommended).
 
 ```bash
-npm install
-npm run dev          # dev server at http://localhost:5173
-npm test             # 72 unit tests (vitest)
-npm run typecheck    # strict TypeScript
-npm run build        # sitemap → typecheck → production build (dist/)
-npm run preview      # serve the production build
+npm ci
+npm run dev             # Vite, port 5173, bound to all interfaces for remote previews
+npm run typecheck       # Strict TypeScript
+npm run check:registry  # Unique slugs, valid categories, metadata and related links
+npm test                # 227 unit tests
+npm run build           # Generate sitemap, typecheck, production build
+npm run preview         # Serve the production build
 ```
 
-## What’s included (v0.1 — Phase 1 + 2 release)
+## Word documents → one PDF
 
-**47 working tools across 8 categories**, all registry-driven:
+Open **Combine Word to PDF** (`/tools/combine-word-to-pdf`):
 
-| Category | Tools |
-| --- | --- |
-| 🖼️ Image | Compressor · Resizer · Converter · Cropper |
-| 📄 PDF & Document | Merger · Splitter · Images → PDF |
-| ✍️ Text | Word Counter · Text Cleaner · Case Converter · Text Diff · Lorem Ipsum |
-| 💻 Developer | JSON Formatter/Validator · Base64 · URL Encoder · UUID Generator · Timestamp Converter · Color Converter |
-| 🔢 Calculator & Converter | Percentage · Discount · File Size · Unit (length/weight/temp/time/speed) · Age |
-| 📣 Marketing & Social | QR Generator (URL/text/Wi-Fi/email/phone) · UTM Builder · Meta Tag Generator |
-| 💼 Business | Invoice Generator · Receipt Generator (print/save-as-PDF) |
-| 🔧 Utility | Password Generator |
+1. Add two or more `.docx` documents (drag-and-drop or browse).
+2. Arrange them with the up/down controls; remove any unwanted files.
+3. Choose an output name, then select **Combine & create PDF**.
+4. Inspect the local PDF preview, navigate its pages, and download the result.
 
-Platform features:
+Also available:
 
-- **Universal search** with natural-language intent mapping (“make this image smaller” → Image Compressor)
-- **Tool registry** as the single source of truth — category pages, search, navigation, related tools
-  and the sitemap are all generated from one file
-- **SEO landing pages per tool**: breadcrumbs, how-to, features, FAQ, related tools, privacy section,
-  per-route title/meta/canonical/OG, build-time `sitemap.xml`
-- **Dark/light mode**, fully responsive, keyboard-accessible controls
-- **PWA**: web manifest + offline service worker (app shell cached)
-- **Privacy-first analytics foundation**: only tool-level events (tool opened/completed, downloads),
-  kept locally until a backend ingestion endpoint is configured (`VITE_TOOLBOX_API_URL`)
+- **Word to PDF** — a single DOCX document.
+- **Mixed Files to PDF** — combine DOCX, PDF, PNG, JPEG and WebP in one ordered PDF.
+- **Word to Text**, **Text to Word**, **Text to PDF**, **Markdown to PDF**.
+- **PDF Text to Word** — extract selectable PDF text into an editable DOCX.
 
-## Adding a tool (the whole platform is registry-driven)
+### Important format limitations
 
-1. Create the component, e.g. `src/tools/text/SortLines.tsx` (default export).
-2. Add one entry to `src/registry/index.ts`:
+These tools deliberately avoid uploading documents to a conversion server:
 
-   ```ts
-   {
-     slug: 'sort-lines',
-     name: 'Line Sorter',
-     category: 'text',
-     tagline: '…', description: '…', icon: '↕️',
-     clientOnly: true,
-     tags: ['sort', 'lines', 'alphabetical'],
-     aliases: ['sort lines a to z'],
-     steps: ['…'], features: ['…'], faq: [{ q: '…', a: '…' }],
-     related: ['text-cleaner'],
-     component: lazy(() => import('../tools/text/SortLines')),
-   },
-   ```
+- Word conversion uses `docx-preview` and browser rendering. Common formatting, tables and embedded
+  images are supported, but fonts, complex layouts, fields, tracked changes, headers/footers and
+  pagination can differ from Microsoft Word. Legacy `.doc` is **not supported**.
+- Word, Markdown and text → PDF produce **image-based pages**, not selectable/searchable text.
+  Existing PDF pages in a mixed merge retain their original content. Long rasterized content may
+  break at visual page boundaries; always review the preview before sharing.
+- PDF → text/Word extracts **selectable text only**. It does not preserve the original layout and
+  does not perform OCR on scans.
+- Spreadsheet tools support **XLSX**, not legacy XLS. Formula results are cached values, not
+  recalculated. The first 100 rows are previewed; downloads contain all rows. CSV exports escape
+  formula-like text to reduce spreadsheet formula injection.
+- ZIP extraction does not support passwords/encryption. Archives are bounded to 1,000 entries and
+  200 MB of declared expanded data. Normal file tasks accept up to 50 MB total; workbooks up to 20 MB.
+- Watermark PDF supports Latin characters. Image-based document conversion supports browser-renderable
+  Unicode fonts. JWT decoding does not verify signatures. Calculators provide estimates, not advice.
 
-That’s it — the tool appears in All Tools, its category page, search, related-tool suggestions,
-the footer and the sitemap (regenerated on `npm run build`). Tools are lazy-loaded, so heavy
-dependencies (pdf-lib, qrcode) only ship on the pages that need them.
+## The expanded collection
+
+| Category               | Total | Highlights                                                                                                         |
+| ---------------------- | ----: | ------------------------------------------------------------------------------------------------------------------ |
+| PDF & Document         |    22 | Word conversion, ordered mixed-file merge, PDF preview, watermarks, numbering, metadata, resizing, text extraction |
+| Image                  |    16 | Compression, format conversion, resize/crop, rotate/flip, grayscale, brightness, watermarks, collages              |
+| Text                   |    23 | Counters, case conversion, diff, cleaning, extraction, find/replace, UTF-8 binary, HTML entities                   |
+| Developer              |    28 | JSON/YAML/XML, JWT, SQL formatting, CSS/JS minification, HMAC, bases, regex, hashes, UUIDs                         |
+| Calculator & Converter |    17 | Units, percentages, BMI, loans, compound/simple interest, tips, tax, dates, fractions, pace, fuel                  |
+| Marketing & Social     |    10 | QR codes, UTM, metadata, social formatting, thumbnails, robots.txt, sitemaps                                       |
+| Business               |    11 | Excel/CSV/JSON conversion, spreadsheet viewer, invoices, receipts, purchase orders, certificates                   |
+| Utility                |    11 | ZIP creation/extraction, file checksums, passwords, clocks, timers, contrast                                       |
+
+The registry is authoritative; see [the new-tool catalogue](docs/expansion.md) for all 64 additions.
+
+## End-to-end tests
+
+```bash
+npx playwright install --with-deps chromium
+npm run test:e2e
+```
+
+The **72-test browser suite** smoke-tests **all 138 routes** and exercises **every new tool** using generated real fixtures:
+DOCX, PDF, XLSX, PNG and ZIP. Tests validate downloaded file signatures and contents, document page
+counts, input ordering, worksheet selection, duplicate archive filenames, search, persistent favorites,
+mobile bounds, dark mode, invalid-input recovery and the existing PDF-to-image MIME-picker regression.
+No user files or external conversion services are used.
+
+Optional CI overrides:
+
+- `PLAYWRIGHT_BASE_URL` — target an already running deployment/production preview.
+- `PLAYWRIGHT_CHROMIUM_PATH` — use an existing Chromium executable.
 
 ## Architecture
 
-```
-                       TOOLBOX
-                          │
-        ┌─────────────────┴──────────────────┐
-        │                                    │
-   CLASS A — INSTANT TOOLS            (future) CLASS B — CLOUD TOOLS
-        │                                    │
-   Browser only — no server          Cloudflare Workers + D1 + R2
-        │                                    │
-        └──────────────┬─────────────────────┘
-                       │
-                   Vercel (frontend)
-```
-
-- **Frontend**: React 18 + TypeScript + Vite + Tailwind CSS + React Router
-- **Processing**: browser engines only (Canvas for images, `pdf-lib` for PDFs, `qrcode` for QR,
-  `crypto.subtle`/`randomUUID` for generators) — no upload, by design
-- **Hosting**: Vercel (static SPA + `vercel.json` rewrites)
-- **Future backend**: Cloudflare Workers/D1/R2 for saved projects, accounts, business workspace
-  (see `docs/roadmap.md`)
-
-### Key directories
+React 18 + TypeScript + React Router + Vite + Tailwind. All processing is client-side.
 
 ```
-src/
-├── registry/        # categories + tool metadata (single source of truth)
-├── lib/             # pure logic (text, color, units, dates, search, image…) + tests
-├── components/      # layout, UI kit, tool page template, search
-├── pages/           # home, all tools, category, tool route, 404
-└── tools/           # the 74 tool components, grouped by category
-scripts/             # build-time sitemap + registry integrity check
+src/registry/index.ts       Original tool metadata + merged registry
+src/registry/extra.ts       New tool specs, lazy engine loaders, generated metadata
+src/registry/categories.ts  Eight category definitions
+src/tools/extended/         Seven reusable, task-specific workbench engines
+src/lib/                   Testable transformation/conversion logic
+src/components/            Shared UI, search, document preview, layouts and error recovery
+src/pages/                 Home, library, categories, tool routes and 404
+src/lib/__tests__/          Unit tests
+tests/workflows.spec.ts    Browser smoke and end-to-end workflow tests
 ```
 
-## Scripts
+Heavy libraries are lazy-loaded by tool/operation. The initial home/library route does not load Excel,
+Word rendering, PDF conversion or minification engines. Fonts are self-hosted, with no Google Fonts
+requests. The service worker caches app assets, never user inputs. Navigation is network-first with
+an offline app-shell fallback; an individual tool is available offline only after its assets load.
 
-| Command | Purpose |
-| --- | --- |
-| `npm run dev` | Vite dev server (HMR) |
-| `npm test` | Vitest unit tests (pure logic: search, text, color, units, dates, QR/UTM/meta builders, page-range parsing, password generator) |
-| `npm run typecheck` | Strict TS, no emit |
-| `npm run build` | `scripts/generate-sitemap.ts` → `tsc` → `vite build` |
-| `npm run check:registry` | Validates registry integrity (unique slugs, related links, SEO completeness) |
+Favorites store **tool slugs only** in localStorage. Tool inputs and output files stay in component
+memory, not persistent storage. Optional existing telemetry records tool-level events, never content.
 
-## Security & privacy notes
+### Adding another tool
 
-- All file processing is client-side; no tool uploads user data.
-- Dangerous generated content (downloaded HTML from the invoice tool) is escaped.
-- The service worker stores only app-shell assets — never user data.
-- Analytics (Phase 4) will record tool-level events only, never content.
-- Known attack surface to audit before scale: decompression bombs / oversized uploads are
-  bounded by browser memory; SVG input is intentionally **not** accepted by the image tools.
+For a new operation using an existing workbench engine:
+
+1. Implement and test the operation in its corresponding `src/lib/` module.
+2. Add its UI options to the relevant `src/tools/extended/` engine if needed.
+3. Add a spec in `src/registry/extra.ts` with honest format limitations.
+4. Add an end-to-end fixture test and run the registry check.
+
+For a standalone component, add an entry to `src/registry/index.ts` with its lazy import, category,
+search tags/aliases, steps, features, FAQ and related slugs. Navigation, search, related tools,
+category counts and sitemap follow automatically.
 
 ## Deployment
 
-### Vercel (frontend)
+Static hosting is sufficient; no backend, credentials or environment variables are required.
+Vercel uses the included SPA rewrite configuration: build `npm run build`, output `dist`.
+Set `SITE_URL=https://yourdomain.com` for production sitemap generation and update `public/robots.txt`.
+The example domain remains a placeholder until a real deployment domain is configured.
 
-1. Push the repository.
-2. In Vercel: import repo → framework **Vite** → build `npm run build` → output `dist`.
-3. No environment variables are required for the client-side release.
-   Optionally set `VITE_TOOLBOX_API_URL` once the Cloudflare API exists (enables event ingestion).
-4. `vercel.json` already provides SPA rewrites. Set your real domain and update
-   `SITE_URL` when building the sitemap (`SITE_URL=https://yourdomain.com npm run build`),
-   and `public/robots.txt`.
-
-### Cloudflare (future Phase 4 — accounts & saved projects)
-
-See `docs/roadmap.md` for the planned Workers/D1/R2 surface. Nothing in the current release
-requires Cloudflare credentials.
-
-## Roadmap
-
-See [docs/roadmap.md](docs/roadmap.md) — Phase 3 (expand to 40+ tools), Phase 4 (accounts,
-saved projects on Cloudflare), Phase 5 (Pro/Business tiers).
+`npm audit` is clean at this release. The toolchain is on patched Vite/Vitest/Router versions;
+ExcelJS's UUID dependency is overridden to the compatible patched CommonJS release.

@@ -1,110 +1,117 @@
-import { useMemo, useState } from 'react';
-import { useLocation, useSearchParams } from 'react-router-dom';
+import { useMemo } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import { Star, Search, Sparkles } from 'lucide-react';
 import { TOOLS } from '../registry';
 import { CATEGORIES } from '../registry/categories';
 import { searchTools } from '../lib/search';
 import { usePageMeta } from '../lib/meta';
 import { ToolCard } from '../components/ToolCard';
+import { ToolIcon } from '../components/ToolIcon';
 import { Input } from '../components/ui/fields';
-import { cn } from '../lib/utils';
-
-const SEARCHABLE = TOOLS.map((t) => ({ slug: t.slug, name: t.name, tagline: t.tagline, tags: t.tags, aliases: t.aliases }));
-
+import { useFavorites } from '../lib/favorites';
 export function AllToolsPage() {
+  const [params, setParams] = useSearchParams();
+  const q = params.get('q') || '',
+    cat = params.get('category') || 'all',
+    view = params.get('view') || 'all';
+  const { favorites } = useFavorites();
   usePageMeta(
-    'All Tools | ToolBox',
-    `Browse all ${TOOLS.length} free online tools: image tools, PDF tools, text tools, developer tools, calculators, converters, marketing and business tools.`,
+    `${view === 'favorites' ? 'Your favorites' : view === 'new' ? 'Fresh in the box' : 'All tools'} | Toolbox`,
+    `Explore ${TOOLS.length} free tools.`,
     '/tools',
   );
-  const location = useLocation();
-  const [params, setParams] = useSearchParams();
-  const initialQ = params.get('q') ?? (location.state as { q?: string } | null)?.q ?? '';
-  const [q, setQ] = useState(initialQ);
-  const [cat, setCat] = useState<string>('all');
-
+  const update = (key: string, value: string) => {
+    const next = new URLSearchParams(params);
+    value && value !== 'all' ? next.set(key, value) : next.delete(key);
+    setParams(next, { replace: true });
+  };
   const results = useMemo(() => {
-    let list = TOOLS;
-    if (cat !== 'all') list = list.filter((t) => t.category === cat);
-    const query = q.trim();
-    if (!query) return list;
-    const hits = new Set(searchTools(query, SEARCHABLE).map((h) => h.slug));
-    // Fallback: simple substring match so the list view always yields *something*.
-    const loose = list.filter(
+    let list = TOOLS.filter(
       (t) =>
-        t.name.toLowerCase().includes(query.toLowerCase()) ||
-        t.tagline.toLowerCase().includes(query.toLowerCase()) ||
-        t.tags.some((tag) => tag.toLowerCase().includes(query.toLowerCase())),
+        (cat === 'all' || t.category === cat) &&
+        (view !== 'new' || t.tags.includes('new')) &&
+        (view !== 'favorites' || favorites.includes(t.slug)),
     );
-    const scored = loose.filter((t) => hits.has(t.slug));
-    const rest = loose.filter((t) => !hits.has(t.slug));
-    return [...scored, ...rest];
-  }, [q, cat]);
-
+    if (q.trim()) {
+      const hits = searchTools(q, list);
+      const rank = new Map(hits.map((h, i) => [h.slug, i]));
+      list = list.filter((t) => rank.has(t.slug)).sort((a, b) => rank.get(a.slug)! - rank.get(b.slug)!);
+    }
+    return list;
+  }, [q, cat, view, favorites]);
   return (
-    <div className="container-page animate-fade-in py-10">
-      <h1 className="text-3xl font-bold tracking-tight">All tools</h1>
-      <p className="mt-2 text-sm text-zinc-500 dark:text-zinc-400">
-        {TOOLS.length} free tools. Search by task or filter by category.
-      </p>
-
-      <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center">
-        <Input
-          type="search"
-          aria-label="Filter tools"
-          placeholder='Search by task — e.g. "compress image", "json"…'
-          value={q}
-          onChange={(e) => {
-            setQ(e.target.value);
-            setParams(e.target.value ? { q: e.target.value } : {}, { replace: true });
-          }}
-          className="sm:max-w-md"
-        />
-        <div className="flex flex-wrap gap-1.5" role="group" aria-label="Filter by category">
-          <button
-            onClick={() => setCat('all')}
-            className={cn(
-              'rounded-full px-3.5 py-1.5 text-xs font-medium transition-colors',
-              cat === 'all'
-                ? 'bg-indigo-600 text-white'
-                : 'border border-zinc-200 bg-white text-zinc-600 hover:border-indigo-300 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300',
+    <div className="container-page library-page animate-fade-in">
+      <div className="library-heading">
+        <div>
+          <div className="eyebrow muted">A LITTLE HELP GOES A LONG WAY</div>
+          <h1>
+            {view === 'favorites' ? (
+              <>
+                Your <em>favorites.</em>
+              </>
+            ) : view === 'new' ? (
+              <>
+                Fresh in the <em>box.</em>
+              </>
+            ) : (
+              <>
+                Find your <em>flow.</em>
+              </>
             )}
-          >
-            All
-          </button>
-          {CATEGORIES.map((c) => (
-            <button
-              key={c.id}
-              onClick={() => setCat(c.id)}
-              className={cn(
-                'rounded-full px-3.5 py-1.5 text-xs font-medium transition-colors',
-                cat === c.id
-                  ? 'bg-indigo-600 text-white'
-                  : 'border border-zinc-200 bg-white text-zinc-600 hover:border-indigo-300 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300',
-              )}
-            >
-              {c.icon} {c.name.replace(' Tools', '')}
-            </button>
-          ))}
+          </h1>
+          <p>
+            {view === 'favorites'
+              ? 'Your go-to tools. Right where you left them.'
+              : view === 'new'
+                ? 'More possibilities, freshly unpacked. Meet the latest additions.'
+                : `${TOOLS.length} thoughtfully useful tools. No installs. No sign-ups. No limits on possibility.`}
+          </p>
         </div>
+        <span className="library-count">{results.length} TOOLS TO EXPLORE</span>
       </div>
-
-      {results.length === 0 ? (
-        <div className="mt-16 flex flex-col items-center text-center">
-          <span aria-hidden className="text-4xl">🔍</span>
-          <h2 className="mt-4 text-lg font-semibold">No tools match “{q}”</h2>
-          <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">Try a different word — or browse the full list.</p>
+      <div className="library-search">
+        <Input
+          aria-label="Filter tools"
+          type="search"
+          placeholder="What do you need to get done?"
+          value={q}
+          onChange={(e) => update('q', e.target.value)}
+        />
+      </div>
+      <div className="library-filters" role="group" aria-label="Filter by category">
+        <button className={cat === 'all' ? 'active' : ''} onClick={() => update('category', 'all')}>
+          <Sparkles size={14} /> All tools
+        </button>
+        {CATEGORIES.map((c) => (
           <button
-            onClick={() => setQ('')}
-            className="mt-4 text-sm font-medium text-indigo-600 hover:underline dark:text-indigo-400"
+            key={c.id}
+            onClick={() => update('category', c.id)}
+            className={cat === c.id ? 'active' : ''}
           >
-            Clear search
+            <ToolIcon category={c.id} size={14} />
+            {c.name.replace(' Tools', '').replace(' & Converter', '')}
+            <small>{TOOLS.filter((t) => t.category === c.id).length}</small>
           </button>
-        </div>
-      ) : (
-        <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        ))}
+      </div>
+      {results.length ? (
+        <div className="home-tools-grid">
           {results.map((t) => (
             <ToolCard key={t.slug} tool={t} />
           ))}
+        </div>
+      ) : (
+        <div className="empty-state">
+          {view === 'favorites' ? <Star /> : <Search />}
+          <h2>{view === 'favorites' ? 'A little empty. A lot of potential.' : 'No tools found just yet.'}</h2>
+          <p>
+            {view === 'favorites'
+              ? 'Tap the star on any tool to keep it here.'
+              : 'Try a shorter search or another category.'}
+          </p>
+          <button className="orange-button" onClick={() => setParams({})}>
+            Explore all tools
+          </button>
         </div>
       )}
     </div>

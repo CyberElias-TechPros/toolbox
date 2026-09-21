@@ -1,4 +1,5 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { Search, ArrowUpRight } from 'lucide-react';
+import { useEffect, useId, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { searchTools } from '../lib/search';
 import { TOOLS } from '../registry';
@@ -27,6 +28,7 @@ export function SearchBox({
   onNavigate?: () => void;
 }) {
   const navigate = useNavigate();
+  const listId = useId();
   const [query, setQuery] = useState('');
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState(0);
@@ -82,11 +84,13 @@ export function SearchBox({
       <div
         className={cn(
           'flex items-center gap-3 rounded-2xl border bg-white shadow-card transition-colors focus-within:border-indigo-500 focus-within:ring-2 focus-within:ring-indigo-500/25 dark:bg-zinc-900',
-          large ? 'border-transparent px-5 py-4 ring-1 ring-zinc-200 dark:ring-zinc-800' : 'border-zinc-300 px-3.5 py-2.5 dark:border-zinc-700',
+          large
+            ? 'border-transparent px-5 py-4 ring-1 ring-zinc-200 dark:ring-zinc-800'
+            : 'border-zinc-300 px-3.5 py-2.5 dark:border-zinc-700',
         )}
       >
         <span aria-hidden className={cn('shrink-0 text-zinc-400', large ? 'text-lg' : 'text-sm')}>
-          🔍
+          <Search size={19} strokeWidth={1.7} />
         </span>
         <input
           ref={inputRef}
@@ -94,7 +98,10 @@ export function SearchBox({
           role="combobox"
           aria-expanded={open && hits.length > 0}
           aria-label="Search tools"
-          placeholder={large ? 'What do you want to do?  e.g. “compress an image”' : 'Search tools…'}
+          aria-controls={open && hits.length ? listId : undefined}
+          aria-activedescendant={open && hits[active] ? `${listId}-${active}` : undefined}
+          aria-autocomplete="list"
+          placeholder={large ? 'What can we help you do?' : 'Search tools…'}
           className={cn(
             'w-full bg-transparent text-zinc-900 placeholder:text-zinc-400 focus:outline-none dark:text-zinc-100 dark:placeholder:text-zinc-500',
             large ? 'text-base sm:text-lg' : 'text-sm',
@@ -139,21 +146,27 @@ export function SearchBox({
               </button>
             </div>
           ) : (
-            <ul role="listbox" aria-label="Tool suggestions">
+            <ul id={listId} role="listbox" aria-label="Tool suggestions">
               {hits.map((hit, i) => (
-                <li key={hit.slug} role="option" aria-selected={i === active}>
+                <li id={`${listId}-${i}`} key={hit.slug} role="option" aria-selected={i === active}>
                   <button
                     className={cn(
                       'flex w-full items-center gap-3 px-5 py-3 text-left text-sm',
-                      i === active ? 'bg-indigo-50 dark:bg-indigo-950/50' : 'hover:bg-zinc-50 dark:hover:bg-zinc-800/60',
+                      i === active
+                        ? 'bg-indigo-50 dark:bg-indigo-950/50'
+                        : 'hover:bg-zinc-50 dark:hover:bg-zinc-800/60',
                     )}
                     onMouseEnter={() => setActive(i)}
                     onClick={() => go(hit.slug)}
                   >
-                    <span aria-hidden>🧰</span>
+                    <ArrowUpRight aria-hidden size={18} className="text-indigo-500" />
                     <span className="min-w-0">
-                      <span className="block truncate font-medium text-zinc-900 dark:text-zinc-100">{hit.name}</span>
-                      <span className="block truncate text-xs text-zinc-500 dark:text-zinc-400">{hit.tagline}</span>
+                      <span className="block truncate font-medium text-zinc-900 dark:text-zinc-100">
+                        {hit.name}
+                      </span>
+                      <span className="block truncate text-xs text-zinc-500 dark:text-zinc-400">
+                        {hit.tagline}
+                      </span>
                     </span>
                   </button>
                 </li>
