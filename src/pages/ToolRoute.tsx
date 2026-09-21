@@ -8,7 +8,7 @@ export function ToolRoute() {
   const tool = getTool(slug);
   if (!tool) return <Navigate to="/404" replace />;
   return (
-    <ToolPage tool={tool}>
+    <ToolPage key={slug} tool={tool}>
       <tool.component />
     </ToolPage>
   );

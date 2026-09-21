@@ -5,7 +5,7 @@ import { CopyButton } from '../../components/ui/CopyButton';
 import { STYLES } from '../../lib/unicode';
 
 export default function SocialFormatter() {
-  const [text, setText] = useState('Welcome to ToolBox');
+  const [text, setText] = useState('Welcome to Toolbox');
   const styles = useMemo(() => STYLES.map((s) => ({ ...s, value: s.sample(text) })), [text]);
 
   return (

@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { usePageMeta } from '../lib/meta';
 
 export function NotFoundPage() {
-  usePageMeta('Page not found | ToolBox', 'The page you are looking for does not exist.', '/404');
+  usePageMeta('Page not found | Toolbox', 'The page you are looking for does not exist.', '/404');
   return (
     <div className="container-page flex flex-col items-center py-28 text-center">
       <span aria-hidden className="text-5xl">🧭</span>

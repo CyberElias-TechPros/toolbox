@@ -13,9 +13,9 @@ export const CATEGORIES: Category[] = [
     id: 'pdf',
     name: 'PDF & Document Tools',
     icon: '📄',
-    tagline: 'Merge, split and create PDF files',
+    tagline: 'Convert Word, combine files and edit PDFs',
     description:
-      'Combine PDFs, extract pages and build new PDFs from images. Files never leave your browser.',
+      'Convert and combine Word documents, bring mixed files into one PDF, edit pages and extract text. All without uploading your files.',
   },
   {
     id: 'text',
@@ -53,9 +53,9 @@ export const CATEGORIES: Category[] = [
     id: 'business',
     name: 'Business Tools',
     icon: '💼',
-    tagline: 'Invoices, receipts and documents',
+    tagline: 'Spreadsheets, invoices and documents',
     description:
-      'Professional, printable business documents you can create in minutes and save as PDF — no template fees.',
+      'Convert Excel, CSV and JSON, inspect spreadsheets, and create professional business documents — no template fees.',
   },
   {
     id: 'utility',

@@ -10,7 +10,7 @@ export default function RobotsTxt() {
   const [allowAll, setAllowAll] = useState(true);
   const [disallow, setDisallow] = useState('/admin\n/private');
   const [sitemaps, setSitemaps] = useState('https://example.com/sitemap.xml');
-  const [comment, setComment] = useState('Generated with ToolBox');
+  const [comment, setComment] = useState('Generated with Toolbox');
 
   const output = useMemo(
     () =>

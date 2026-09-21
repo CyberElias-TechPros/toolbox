@@ -15,16 +15,16 @@ const root = join(here, '..');
 const origin = (process.env.SITE_URL || 'https://toolbox.example.com').replace(/\/$/, '');
 
 const urls: Array<{ loc: string; title: string; description: string }> = [
-  { loc: '/', title: 'ToolBox — Everyday Tools, All in One Place', description: 'Free, fast, private browser tools: images, PDF, text, developer, calculators, marketing and business.' },
-  { loc: '/tools', title: 'All Tools | ToolBox', description: `Browse all ${TOOLS.length} free online tools.` },
+  { loc: '/', title: 'Toolbox — Everyday Tools, All in One Place', description: 'Free, fast, private browser tools: images, PDF, text, developer, calculators, marketing and business.' },
+  { loc: '/tools', title: 'All Tools | Toolbox', description: `Browse all ${TOOLS.length} free online tools.` },
   ...CATEGORIES.map((c) => ({
     loc: `/category/${c.id}`,
-    title: `${c.name} | ToolBox`,
+    title: `${c.name} | Toolbox`,
     description: c.description,
   })),
   ...TOOLS.map((t) => ({
     loc: `/tools/${t.slug}`,
-    title: `${t.name} — Free Online Tool | ToolBox`,
+    title: `${t.name} — Free Online Tool | Toolbox`,
     description: t.description,
   })),
 ];

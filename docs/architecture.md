@@ -2,7 +2,7 @@
 
 ## Design principle: two classes of tools
 
-The single most important architectural rule of ToolBox:
+The single most important architectural rule of Toolbox:
 
 > **Do not turn the entire platform into a backend application.**
 

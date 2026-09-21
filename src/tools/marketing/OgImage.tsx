@@ -28,7 +28,7 @@ function wrapText(ctx: CanvasRenderingContext2D, text: string, maxWidth: number)
 export default function OgImage() {
   const [title, setTitle] = useState('My Awesome Product');
   const [subtitle, setSubtitle] = useState('Everything you need, done privately in your browser.');
-  const [brand, setBrand] = useState('ToolBox');
+  const [brand, setBrand] = useState('Toolbox');
   const [bg, setBg] = useState('#4f46e5');
   const [blob, setBlob] = useState<Blob | null>(null);
 

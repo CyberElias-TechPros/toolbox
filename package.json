@@ -1,9 +1,9 @@
 {
   "name": "toolbox",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.2.0",
   "type": "module",
-  "description": "ToolBox — everyday tools, all in one place. Fast, free, private browser tools.",
+  "description": "Toolbox — everyday tools, all in one place. Fast, free, private browser tools.",
   "scripts": {
     "dev": "vite",
     "build": "tsx scripts/generate-sitemap.ts && tsc --noEmit && vite build",
@@ -11,27 +11,52 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "check:registry": "tsx scripts/registry-check.ts"
+    "check:registry": "tsx scripts/registry-check.ts",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
+    "@fontsource-variable/dm-sans": "^5.3.0",
+    "@fontsource/instrument-serif": "^5.3.0",
+    "csso": "^5.0.5",
+    "docx": "^9.7.1",
+    "docx-preview": "^0.4.0",
+    "dompurify": "^3.4.15",
+    "exceljs": "^4.4.0",
+    "fast-xml-parser": "^5.11.1",
+    "he": "^1.2.0",
+    "html2canvas": "^1.4.1",
+    "jszip": "^3.10.2",
+    "lucide-react": "^1.47.0",
+    "mammoth": "^1.12.3",
     "pdf-lib": "^1.17.1",
     "pdfjs-dist": "^6.3.289",
     "qrcode": "^1.5.4",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-router-dom": "^6.28.0"
+    "react-router-dom": "^7.18.4",
+    "sql-formatter": "^15.8.2",
+    "terser": "^5.51.2",
+    "yaml": "^2.9.1"
   },
   "devDependencies": {
+    "@playwright/test": "^1.63.0",
+    "@types/csso": "^5.0.5",
+    "@types/he": "^1.2.3",
     "@types/qrcode": "^1.5.5",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
-    "@vitejs/plugin-react": "^4.3.4",
+    "@vitejs/plugin-react": "^5.0.0",
     "autoprefixer": "^10.4.20",
     "postcss": "^8.4.49",
     "tailwindcss": "^3.4.15",
     "tsx": "^4.19.2",
     "typescript": "^5.7.2",
-    "vite": "^5.4.11",
-    "vitest": "^2.1.8"
+    "vite": "^7.3.6",
+    "vitest": "^4.1.11"
+  },
+  "overrides": {
+    "exceljs": {
+      "uuid": "^11.1.1"
+    }
   }
 }

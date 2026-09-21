@@ -1,4 +1,5 @@
 import { createElement, lazy } from 'react';
+import { EXTRA_TOOLS } from './extra';
 import type { Tool } from './types';
 
 /**
@@ -10,6 +11,7 @@ import type { Tool } from './types';
  */
 
 export const TOOLS: Tool[] = [
+  ...EXTRA_TOOLS,
   /* ----------------------------- Image ----------------------------- */
   {
     slug: 'image-compressor',

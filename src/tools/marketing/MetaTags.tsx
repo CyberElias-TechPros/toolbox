@@ -33,7 +33,7 @@ export function buildMetaTags(i: MetaInput): string {
   if (i.description.trim()) lines.push(`  <meta name="twitter:description" content="${esc(i.description.trim())}" />`);
   if (i.image.trim()) lines.push(`  <meta name="twitter:image" content="${esc(i.image.trim())}" />`);
   if (i.twitter.trim()) lines.push(`  <meta name="twitter:site" content="${esc(i.twitter.trim())}" />`);
-  return `<!-- ToolBox meta tags -->\n${lines.join('\n')}`;
+  return `<!-- Toolbox meta tags -->\n${lines.join('\n')}`;
 }
 
 export default function MetaTags() {
@@ -67,7 +67,7 @@ export default function MetaTags() {
           </Field>
           <div className="grid grid-cols-2 gap-4">
             <Field label="Site name">
-              <Input value={i.siteName} onChange={set('siteName')} placeholder="ToolBox" aria-label="Site name" />
+              <Input value={i.siteName} onChange={set('siteName')} placeholder="Toolbox" aria-label="Site name" />
             </Field>
             <Field label="Twitter/X handle">
               <Input value={i.twitter} onChange={set('twitter')} placeholder="@yoursite" aria-label="Twitter handle" />

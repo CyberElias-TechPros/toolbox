@@ -1,3 +1,4 @@
+import { ToolIcon } from '../components/ToolIcon';
 import { Link, Navigate, useParams } from 'react-router-dom';
 import { CATEGORIES, CATEGORY_BY_ID } from '../registry/categories';
 import { toolsByCategory } from '../registry';
@@ -10,7 +11,7 @@ export function CategoryPage() {
   const tools = category ? toolsByCategory(id) : [];
 
   usePageMeta(
-    category ? `${category.name} | ToolBox` : 'Category not found | ToolBox',
+    category ? `${category.name} | Toolbox` : 'Category not found | Toolbox',
     category ? category.description : 'This category does not exist.',
     `/category/${id}`,
   );
@@ -34,16 +35,21 @@ export function CategoryPage() {
       </nav>
 
       <header className="mt-4 flex items-start gap-4">
-        <span aria-hidden className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500/10 to-violet-500/10 text-3xl ring-1 ring-inset ring-indigo-500/20">
-          {category.icon}
+        <span
+          aria-hidden
+          className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500/10 to-violet-500/10 text-3xl ring-1 ring-inset ring-indigo-500/20"
+        >
+          <ToolIcon category={category.id} size={26} />
         </span>
         <div>
           <h1 className="text-3xl font-bold tracking-tight">{category.name}</h1>
-          <p className="mt-2 max-w-2xl text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">{category.description}</p>
+          <p className="mt-2 max-w-2xl text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
+            {category.description}
+          </p>
         </div>
       </header>
 
-      <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="mt-8 home-tools-grid">
         {tools.map((t) => (
           <ToolCard key={t.slug} tool={t} />
         ))}
@@ -56,7 +62,7 @@ export function CategoryPage() {
             to={`/category/${c.id}`}
             className="rounded-full border border-zinc-200 bg-white px-3.5 py-1.5 text-xs font-medium text-zinc-600 hover:border-indigo-300 hover:text-indigo-600 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:text-indigo-400"
           >
-            {c.icon} {c.name}
+            {c.name}
           </Link>
         ))}
       </div>
